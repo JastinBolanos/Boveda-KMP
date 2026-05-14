@@ -1,0 +1,30 @@
+# --- Entorno Local y Llaves ---
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# --- Archivos de IDE y Caché ---
+.idea
+*.iml
+.kotlin
+captures
+.DS_Store
+
+# --- Carpetas de Compilación de Gradle ---
+.gradle
+**/build/
+.externalNativeBuild
+.cxx
+
+# --- Archivos de Node (Si usas herramientas JS) ---
+node_modules/
+
+# --- Configuraciones Nativas de iOS (Limpieza de Xcode) ---
+xcuserdata
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
