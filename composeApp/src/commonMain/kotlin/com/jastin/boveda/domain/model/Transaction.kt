@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Transaction(
-    val id: String, // UUID generado en el celular: "La magia para que el banco no cobre doble"
+    val id: String,
     val amount: Double,
     val receiverName: String,
     val receiverAccount: String,
     val status: TransactionStatus,
-    val timestamp: Long // Vital para calcular si pasaron las 24 horas (TTL)
+    val timestamp: Long
 )
 
 enum class TransactionStatus {
