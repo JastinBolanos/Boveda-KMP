@@ -1,4 +1,4 @@
-rootProject.name = "BovedaKMP"
+rootProject.name = "Boveda-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
