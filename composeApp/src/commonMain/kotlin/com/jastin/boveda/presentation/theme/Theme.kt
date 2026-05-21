@@ -5,6 +5,13 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+/* =========================================================================
+ * MATERIAL THEME WRAPPER (SISTEMA GLOBAL DE DISEÑO)
+ * Conecta nuestros 'Tokens de Color' crudos con el motor de Jetpack Compose.
+ * Al mapear nuestros colores a roles semánticos (Primary, Background, Surface),
+ * permitimos que los componentes estándar de Material3 reaccionen automáticamente
+ * a nuestra identidad visual de marca sin tener que estilizarlos uno por uno.
+ * ========================================================================= */
 private val BovedaColorScheme = lightColorScheme(
     primary = Emerald500,
     onPrimary = Slate950,

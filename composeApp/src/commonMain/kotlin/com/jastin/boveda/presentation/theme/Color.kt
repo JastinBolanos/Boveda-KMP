@@ -2,6 +2,13 @@ package com.jastin.boveda.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
+/* =========================================================================
+ * DESIGN SYSTEM: TOKENS DE COLOR (PALETA BASE)
+ * Definición estricta de la paleta cromática de Bóveda (Tailwind-inspired).
+ * Arquitectura UI: Prohíbe el uso de valores hexadecimales aislados ("Hardcoded")
+ * en los componentes. Cualquier vista debe consumir estos tokens para
+ * garantizar consistencia de marca y escalabilidad (preparación para Dark Mode).
+ * ========================================================================= */
 val Slate950 = Color(0xFF020617)
 val Slate900 = Color(0xFF0F172A)
 val Slate800 = Color(0xFF1E293B)
