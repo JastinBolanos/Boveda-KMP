@@ -1,0 +1,41 @@
+/** =========================================================================
+ * SCHEMA DE PERSISTENCIA (SQLDELIGHT)
+ * Definición del modelo de datos de la base de datos local SQLite.
+ * Esta tabla actúa como la fuente de verdad (Single Source of Truth) para todo
+ * el historial financiero de la aplicación.
+ * ========================================================================= */
+
+-- --- 1. MODELADO DE ENTIDAD ---
+-- ¡MINA TERRESTRE! Usamos REAL para el monto por simplicidad en KMP.
+-- Nota: En sistemas financieros de alta precisión, se recomienda cambiar esto a
+-- INTEGER (almacenar centavos) para evitar errores de redondeo de coma flotante.
+CREATE TABLE TransactionEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    amount REAL NOT NULL,
+    status TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+-- --- 2. ACCESO A DATOS (QUERIES) ---
+
+-- Lectura optimizada del historial financiero.
+-- Ordenamos por timestamp DESC para asegurar que la UI reciba los datos
+-- ya ordenados, evitando lógica de ordenamiento costosa en el hilo principal.
+selectAllTransactions:
+SELECT * FROM TransactionEntity
+ORDER BY timestamp DESC;
+
+-- Punto de entrada para nuevas operaciones.
+-- El orden debe coincidir estrictamente con el orden de las columnas en el CREATE TABLE.
+insertTransaction:
+INSERT INTO TransactionEntity(id, title, amount, status, timestamp)
+VALUES (?, ?, ?, ?, ?);
+
+-- Operación crítica para la sincronización offline.
+-- Permite que el Background Worker realice el cambio de estado de 'PENDING'
+-- a 'COMPLETED' de forma atómica cuando se recupere la conectividad.
+updateTransactionStatus:
+UPDATE TransactionEntity
+SET status = ?
+WHERE id = ?;

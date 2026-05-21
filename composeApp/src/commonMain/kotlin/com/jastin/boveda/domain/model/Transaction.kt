@@ -2,10 +2,14 @@ package com.jastin.boveda.domain.model
 
 import kotlinx.serialization.Serializable
 
-/**
- * Entidad principal de Bóveda KMP.
- * Contiene la lógica central para evitar duplicidad de dinero (Idempotencia).
- */
+/* =========================================================================
+ * ENTIDAD DE DOMINIO: TRANSACTION
+ * Representa el núcleo del negocio (Core Domain) en Clean Architecture.
+ * Esta clase es estrictamente agnóstica a la UI y a las bases de datos.
+ * ========================================================================= */
+
+// --- 1. MODELO DE DATOS PRINCIPAL ---
+// Entidad serializable que actúa como DTO hacia el backend y base de la persistencia.
 @Serializable
 data class Transaction(
     val id: String,
@@ -16,9 +20,12 @@ data class Transaction(
     val timestamp: Long
 )
 
+// --- 2. CICLO DE VIDA DE LA OPERACIÓN ---
+// Define los estados posibles del flujo financiero para garantizar la
+// integridad y consistencia en sistemas distribuidos.
 enum class TransactionStatus {
-    PENDING,    // Guardado localmente, esperando red
-    COMPLETED,  // El servidor del banco respondió 200 OK
-    FAILED,     // Rechazado (ej. no hay fondos reales)
-    EXPIRED     // El TTL mató la transacción (Pasaron 24h sin internet)
+    PENDING,    // Estado inicial en modo offline
+    COMPLETED,  // Confirmado por el servidor
+    FAILED,     // Rechazo de negocio (ej. saldo insuficiente)
+    EXPIRED     // Tiempo de vida superado (TTL) sin sincronización
 }
