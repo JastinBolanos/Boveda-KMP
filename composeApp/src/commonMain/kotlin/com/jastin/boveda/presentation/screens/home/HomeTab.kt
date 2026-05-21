@@ -10,7 +10,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,14 +27,21 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.jastin.boveda.presentation.components.TransactionRow
-import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.screens.activity.ActivityTab
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 import com.jastin.boveda.presentation.screens.transfer.TransferScreen
+import com.jastin.boveda.presentation.screens.main.LocalMenuDrawerState
 import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.formatMoney
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
+/* =========================================================================
+ * PANTALLA PRINCIPAL (DASHBOARD)
+ * Tab principal de la aplicación. Actúa como el centro neurálgico de la UI,
+ * observando los saldos en tiempo real y proveyendo acceso rápido a transferencias
+ * y movimientos recientes.
+ * ========================================================================= */
 object HomeTab : Tab {
 
     override val options: TabOptions
@@ -43,18 +53,33 @@ object HomeTab : Tab {
 
     @Composable
     override fun Content() {
+
+        // --- 1. ENRUTADORES Y PUENTES (COMPOSITION LOCALS) ---
+        // ¡CRÍTICO! Usamos navigator.parent para que las pantallas nuevas se abran
+        // a pantalla completa y no queden atrapadas debajo del BottomNavigation.
         val navigator = LocalNavigator.currentOrThrow.parent ?: LocalNavigator.currentOrThrow
         val tabNavigator = LocalTabNavigator.current
 
-        // Valores iniciales (Más adelante vendrán de la base de datos)
-        val balance = 1500.00
-        val transactions = emptyList<TransactionUiModel>()
+        // ¡MINA TERRESTRE! El Drawer no existe en este Tab, existe en el MainScreen.
+        // Usamos CompositionLocal (LocalMenuDrawerState) para atravesar el árbol de
+        // dependencias y poder abrirlo desde aquí sin tener que pasar callbacks infinitos.
+        val drawerState = LocalMenuDrawerState.current
+        val scope = rememberCoroutineScope()
+
+        // --- 2. OBSERVACIÓN DEL DOMINIO ---
+        val repository = com.jastin.boveda.globalTransactionRepository
+        val balanceState = repository.currentBalance.collectAsState()
+        val balance = balanceState.value
+        val allTransactionsState = repository.transactions.collectAsState()
+        val transactions = allTransactionsState.value.take(3)
+
+        // --- 3. REGLAS DE NEGOCIO VISUALES ---
+        // Aseguramos que visualmente el saldo jamás sea negativo (Data Sanitization).
         val displayBalance = max(0.0, balance)
         val hasInsufficientFunds = balance <= 0
 
         Scaffold(
             containerColor = Slate50,
-            // 1. BARRA SUPERIOR (CON SAFE AREA)
             topBar = {
                 Row(
                     modifier = Modifier
@@ -66,9 +91,7 @@ object HomeTab : Tab {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(Slate900, RoundedCornerShape(12.dp)),
+                            modifier = Modifier.size(48.dp).background(Slate900, RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text("J", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -76,33 +99,23 @@ object HomeTab : Tab {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text("Bienvenido de vuelta", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Medium)
-                            Text("Jastin", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Slate950)
+                            Text("Jastin Abel", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Slate950)
                         }
                     }
 
-                    // ICONO DE TRES RAYAS (MENU)
-                    IconButton(onClick = { /* Abrir Menu Lateral o Ajustes */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = Slate950,
-                            modifier = Modifier.size(28.dp)
-                        )
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Slate950, modifier = Modifier.size(28.dp))
                     }
                 }
             }
         ) { padding ->
             Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .padding(horizontal = 24.dp)
-                    .fillMaxSize()
+                modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()
             ) {
-                // TARJETA DE SALDO
+
+                // --- 4. TARJETA DE SALDO PRINCIPAL ---
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     shape = RoundedCornerShape(32.dp),
                     colors = CardDefaults.cardColors(containerColor = Slate950)
                 ) {
@@ -121,10 +134,8 @@ object HomeTab : Tab {
                             enabled = !hasInsufficientFunds,
                             modifier = Modifier.fillMaxWidth().height(56.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Emerald500,
-                                contentColor = Slate950,
-                                disabledContainerColor = Slate800,
-                                disabledContentColor = Slate400
+                                containerColor = Emerald500, contentColor = Slate950,
+                                disabledContainerColor = Slate800, disabledContentColor = Slate400
                             ),
                             shape = RoundedCornerShape(16.dp)
                         ) {
@@ -133,26 +144,18 @@ object HomeTab : Tab {
                     }
                 }
 
-                // CABECERA DE ACTIVIDAD CON "VER TODO"
+                // --- 5. SECCIÓN DE ACTIVIDAD RECIENTE ---
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp, top = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp, top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Actividad Reciente",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Slate950
-                    )
+                    Text("Actividad Reciente", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Slate950)
                     TextButton(onClick = { tabNavigator.current = ActivityTab }) {
                         Text("Ver todo", color = Emerald500, fontWeight = FontWeight.SemiBold)
                     }
                 }
 
-                // LISTA DE MOVIMIENTOS
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(bottom = 24.dp)

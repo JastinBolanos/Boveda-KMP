@@ -21,10 +21,24 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.jastin.boveda.presentation.components.TransactionRow
-import com.jastin.boveda.presentation.model.TransactionUiModel
+import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 import com.jastin.boveda.presentation.theme.*
 
+/*
+ * =========================================================================
+ * VISTA DE ACTIVIDAD (TAB COMPONENT)
+ * =========================================================================
+ * Implementación de la pestaña de historial de transacciones.
+ * * Estrategia de Navegación: Al implementar [Tab] en lugar de Screen, delegamos
+ * el ciclo de vida a Voyager para que mantenga la vista activa en memoria. Esto
+ * preserva el estado de la UI (scroll, filtros seleccionados) al intercambiar pestañas.
+ * * Enrutamiento de Capas: El acceso al Root Navigator (`parent`) garantiza que las
+ * transiciones hacia vistas de detalle se dibujen sobre el BottomNavigationBar.
+ * * Optimización de Renderizado: Se utiliza el patrón de 'Derived State' (memoización
+ * con [remember] sobre listas filtradas) para prevenir recálculos costosos en el
+ * Main Thread durante las recomposiciones gráficas.
+ */
 object ActivityTab : Tab {
 
     override val options: TabOptions
@@ -40,7 +54,18 @@ object ActivityTab : Tab {
         var selectedFilter by remember { mutableStateOf("Todos") }
         val filters = listOf("Todos", "Entradas", "Salidas", "Pendientes")
 
-        val transactions = emptyList<TransactionUiModel>()
+        val repository = com.jastin.boveda.globalTransactionRepository
+        val transactionsState = repository.transactions.collectAsState()
+        val allTransactions = transactionsState.value
+
+        val filteredTransactions = remember(selectedFilter, allTransactions) {
+            when (selectedFilter) {
+                "Entradas" -> allTransactions.filter { it.amount > 0 && it.status == TxUiStatus.COMPLETED }
+                "Salidas" -> allTransactions.filter { it.amount < 0 && it.status == TxUiStatus.COMPLETED }
+                "Pendientes" -> allTransactions.filter { it.status == TxUiStatus.PENDING }
+                else -> allTransactions
+            }
+        }
 
         Scaffold(
             containerColor = Slate50,
@@ -73,7 +98,7 @@ object ActivityTab : Tab {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp)
             ) {
-                items(transactions) { tx ->
+                items(filteredTransactions) { tx ->
                     TransactionRow(tx) { navigator.push(DetailScreen(tx)) }
                 }
             }
