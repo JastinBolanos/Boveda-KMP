@@ -25,7 +25,15 @@ import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.formatMoney
 import kotlin.math.abs
 
+/* =========================================================================
+ * PANTALLA DE DETALLE DE TRANSACCIÓN (STATELESS SCREEN)
+ * Renderiza la información exhaustiva de un movimiento financiero.
+ * Al inyectar el [TransactionUiModel] directamente por el constructor de Voyager,
+ * eliminamos la necesidad de un ViewModel local y evitamos golpear SQLite
+ * con re-consultas innecesarias. La vista anterior ya digirió los datos.
+ * ========================================================================= */
 data class DetailScreen(val transaction: TransactionUiModel) : Screen {
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -48,14 +56,18 @@ data class DetailScreen(val transaction: TransactionUiModel) : Screen {
         ) { padding ->
             Column(modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()) {
 
-                // Cabecera del detalle
+                // --- 1. IMPACTO FINANCIERO (HERO SECTION) ---
+                // ¡CRÍTICO! Usamos abs(transaction.amount) para extraer el valor absoluto.
+                // Esto evita dobles signos negativos en la UI, ya que los colores y prefijos ("ENVIASTE")
+                // ya comunican la naturaleza del egreso.
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
                     Text(if (transaction.amount > 0) "RECIBISTE" else "ENVIASTE", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Slate400)
                     Text(formatMoney(abs(transaction.amount)), fontSize = 40.sp, fontWeight = FontWeight.ExtraBold, color = Slate950)
                     Text(transaction.title, fontSize = 16.sp, color = Slate800)
                 }
 
-                // Tarjeta de información principal
+                // --- 2. METADATOS DE LA OPERACIÓN ---
+                // Agrupa la data técnica pre-formateada en la capa de presentación.
                 BovedaCard(modifier = Modifier.padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(24.dp)) {
                         DetailRow("Estado", if (transaction.status == TxUiStatus.PENDING) "Pendiente" else "Completado")
@@ -68,7 +80,8 @@ data class DetailScreen(val transaction: TransactionUiModel) : Screen {
                     }
                 }
 
-                // Tarjeta de Historial (Timeline)
+                // --- 3. LÍNEA DE TIEMPO (AUDITORÍA VISUAL) ---
+                // Renderiza iterativamente los pasos del encolamiento.
                 BovedaCard {
                     Column(modifier = Modifier.padding(24.dp)) {
                         Text("Historial de la operación", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
@@ -88,7 +101,8 @@ data class DetailScreen(val transaction: TransactionUiModel) : Screen {
         }
     }
 
-    // Componente privado solo para esta pantalla
+    // --- 4. COMPONENTES INTERNOS DE APOYO ---
+    // Aislado para no saturar la lectura del árbol de composición principal.
     @Composable
     private fun DetailRow(label: String, value: String) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

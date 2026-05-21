@@ -23,13 +23,31 @@ import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 import com.jastin.boveda.presentation.theme.*
+import com.jastin.boveda.utils.BackPressHandler
 
+/* =========================================================================
+ * VOUCHER DE TRANSACCIÓN (RESULT SCREEN)
+ * Renderiza el estado final (o pendiente) de una operación financiera.
+ * Arquitectura de Navegación: Esta pantalla marca el fin de un flujo de usuario.
+ * Debe ser hermética y no permitir que el usuario viaje "hacia atrás" para evitar
+ * estados corruptos o dobles envíos en la capa de datos.
+ * ========================================================================= */
 data class ResultScreen(val transaction: TransactionUiModel) : Screen {
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val isSuccess = transaction.status == TxUiStatus.COMPLETED
 
+        // --- 1. SEGURIDAD FINANCIERA (IDEMPOTENCIA DE UI) ---
+        // ¡CRÍTICO! Destruimos la pila de navegación (backstack) si se usa el gesto físico "Atrás".
+        // Esto previene el clásico bug donde el usuario vuelve al formulario, presiona
+        // "Enviar" de nuevo, y duplica la mutación en SQLite/Backend.
+        BackPressHandler {
+            navigator.popUntilRoot()
+        }
+
+        // --- 2. GESTIÓN DEL THEME REACTIVO ---
         val backgroundColor = if (isSuccess) Slate950 else Amber500
         val contentColor = if (isSuccess) Color.White else Slate950
 
@@ -40,6 +58,7 @@ data class ResultScreen(val transaction: TransactionUiModel) : Screen {
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
+            // --- 3. HERO ICON (RETROALIMENTACIÓN INMEDIATA) ---
             Box(
                 modifier = Modifier.size(120.dp).background(if (isSuccess) Emerald500 else Color.White, RoundedCornerShape(32.dp)),
                 contentAlignment = Alignment.Center
@@ -76,6 +95,7 @@ data class ResultScreen(val transaction: TransactionUiModel) : Screen {
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // --- 4. ACCIONES DE CIERRE DE FLUJO ---
             Button(
                 onClick = { navigator.popUntilRoot() },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
