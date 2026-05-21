@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    // --- TUS NUEVOS PLUGINS ---
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.sqldelight)
 }
@@ -123,7 +122,7 @@ dependencies {
 sqldelight {
     databases {
         create("BovedaDatabase") {
-            packageName.set("com.jastin.boveda.data.local")
+            packageName.set("com.jastin.boveda.database")
         }
     }
 }
