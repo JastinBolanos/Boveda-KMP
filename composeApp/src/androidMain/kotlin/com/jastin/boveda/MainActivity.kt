@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.jastin.boveda.database.DatabaseDriverFactory
+import com.jastin.boveda.utils.AndroidPlatformContext
 
 /*
  * =========================================================================
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        AndroidPlatformContext.applicationContext = this.applicationContext
 
         setContent {
             App(driverFactory = DatabaseDriverFactory(this))
@@ -42,5 +44,4 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    // Intencionalmente vacío por dependencias de Base de Datos nativa.
 }
