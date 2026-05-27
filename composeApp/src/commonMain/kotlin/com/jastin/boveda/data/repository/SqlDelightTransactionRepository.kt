@@ -3,10 +3,12 @@ package com.jastin.boveda.data.repository
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.jastin.boveda.database.BovedaDatabase
+import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.domain.repository.TransactionRepository
 import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.utils.getCurrentTimeMillis
+import com.jastin.boveda.utils.BovedaSyncWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -37,8 +39,6 @@ class SqlDelightTransactionRepository(
     private val queries = database.transactionEntityQueries
 
     // --- 1. LECTURA Y MAPEO DE CAPAS ---
-    // Transforma entidades crudas de la BD a modelos limpios para que la UI no crashee
-    // intentando leer formatos no soportados.
     override val transactions: StateFlow<List<TransactionUiModel>> = queries.selectAllTransactions()
         .asFlow()
         // ¡CRÍTICO! El mapToList debe ir en Dispatchers.IO.
@@ -69,7 +69,6 @@ class SqlDelightTransactionRepository(
         )
 
     // --- 2. MOTOR DE CÁLCULO DE SALDO ---
-    // Recalcula el dinero disponible cada vez que la tabla de transacciones muta.
     override val currentBalance: StateFlow<Double> = transactions.map { list ->
         val initialBalance = 1500.00
         val totalSpent = list.sumOf { it.amount }
@@ -81,23 +80,24 @@ class SqlDelightTransactionRepository(
     )
 
     // --- 3. ESCRITURA (IDEMPOTENCIA Y ENCOLAMIENTO) ---
-    // Inyecta registros en SQLite. Si no hay internet, se guardan como PENDING.
     override fun saveTransaction(transaction: TransactionUiModel) {
         scope.launch(Dispatchers.IO) {
-
-            // Usamos nuestra función nativa KMP para evitar colisiones del compilador con java.time
             val currentTimestamp = getCurrentTimeMillis()
-
-            // Si la transacción viene sin ID (nueva), le asignamos el timestamp como llave única temporal
             val uniqueId = transaction.id.ifBlank { currentTimestamp.toString() }
 
             queries.insertTransaction(
                 id = uniqueId,
                 title = transaction.title,
                 amount = transaction.amount,
-                status = transaction.status.name,
+                status = TxUiStatus.PENDING.name,
                 timestamp = currentTimestamp
             )
+            BovedaSyncWorker().enqueueSync()
+        }
+    }
+    override fun updateTransactionStatus(id: String, status: TransactionStatus) {
+        scope.launch(Dispatchers.IO) {
+            queries.updateTransactionStatus(status.name, id)
         }
     }
 }
