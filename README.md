@@ -30,4 +30,4 @@ Bóveda KMP no es solo una interfaz de banco multiplataforma. Es un sistema fina
 * ✅ **Fase 5:** Motor de Sincronización (Background Sync Worker), Ping de Verdad y Navegación Reactiva.
 * 🚧 **Fase 6: UI "God-Tier" y Rediseño Premium (Micro-interacciones, animaciones estilo Yape/Nubank, y ajuste de últimos "cables sueltos").** `[ESTAMOS AQUÍ]`
 
----
+--- 
