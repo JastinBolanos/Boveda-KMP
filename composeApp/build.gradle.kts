@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -31,18 +30,16 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-
-            // --- DEPENDENCIAS ESPECÍFICAS DE ANDROID ---
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.koin.android)
-            implementation(libs.ktor.client.android) // El motor de red para Android
-            implementation(libs.sqldelight.android.driver) // El motor de base de datos local para Android
+            implementation(libs.ktor.client.android)
+            implementation(libs.sqldelight.android.driver)
+            implementation("androidx.work:work-runtime-ktx:2.9.0")
         }
 
         iosMain.dependencies {
-            // --- DEPENDENCIAS ESPECÍFICAS DE IOS ---
-            implementation(libs.ktor.client.darwin) // El motor de red nativo de Apple
-            implementation(libs.sqldelight.native.driver) // El motor de base de datos local para iOS
+            implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
 
         commonMain.dependencies {
