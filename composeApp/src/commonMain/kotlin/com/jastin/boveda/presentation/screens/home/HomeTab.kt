@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +41,7 @@ import kotlin.math.max
  * observando los saldos en tiempo real y proveyendo acceso rápido a transferencias
  * y movimientos recientes.
  * ========================================================================= */
+
 object HomeTab : Tab {
 
     override val options: TabOptions
@@ -74,7 +74,6 @@ object HomeTab : Tab {
         val transactions = allTransactionsState.value.take(3)
 
         // --- 3. REGLAS DE NEGOCIO VISUALES ---
-        // Aseguramos que visualmente el saldo jamás sea negativo (Data Sanitization).
         val displayBalance = max(0.0, balance)
         val hasInsufficientFunds = balance <= 0
 
@@ -161,8 +160,9 @@ object HomeTab : Tab {
                     contentPadding = PaddingValues(bottom = 24.dp)
                 ) {
                     items(transactions) { tx ->
-                        TransactionRow(tx) { navigator.push(DetailScreen(tx)) }
+                        TransactionRow(tx) { navigator.push(DetailScreen(tx.id)) }
                     }
+
                 }
             }
         }

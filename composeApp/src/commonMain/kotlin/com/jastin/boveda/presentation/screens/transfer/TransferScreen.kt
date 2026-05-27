@@ -1,7 +1,6 @@
 package com.jastin.boveda.presentation.screens.transfer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,15 +24,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.jastin.boveda.presentation.components.BovedaButton
-import com.jastin.boveda.presentation.screens.result.ResultScreen
 import com.jastin.boveda.presentation.theme.*
 
 /* =========================================================================
  * FORMULARIO DE TRANSFERENCIA (STATEFUL SCREEN)
- * Punto de entrada para la mutación de datos.
- * A diferencia de las vistas pasivas, esta pantalla delega su lógica local
- * a un [ScreenModel] para sobrevivir a los cambios de configuración y aislar
- * el estado del formulario de la composición de la UI.
  * ========================================================================= */
 data class TransferScreen(val currentBalance: Double) : Screen {
 
@@ -42,130 +37,139 @@ data class TransferScreen(val currentBalance: Double) : Screen {
         val screenModel = rememberScreenModel { TransferScreenModel() }
         val state by screenModel.state.collectAsState()
 
-        // --- 1. VALIDACIÓN FINANCIERA EN TIEMPO REAL ---
-        // El cálculo de sobregiro (isOverdraft) se realiza en la UI ya que es una
-        // regla de presentación inmediata que bloquea el botón y pinta alertas,
-        // evitando saturar el ScreenModel con lógica visual.
         val amountNum = state.amount.toDoubleOrNull() ?: 0.0
         val isOverdraft = amountNum > currentBalance
 
-        Scaffold(
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { navigator.pop() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
+        LaunchedEffect(state.successTransactionId) {
+            state.successTransactionId?.let { txId ->
+                screenModel.onIntent(TransferIntent.ClearNavigation)
+                navigator.replace(com.jastin.boveda.presentation.screens.detail.DetailScreen(txId))
+            }
+        }
+
+        // Envolvemos todo en un Box para poder superponer la pantalla de carga
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            Scaffold(
+                topBar = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(horizontal = 24.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { navigator.pop() },
+                            enabled = !state.isLoading
+                        ) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
+                        }
+                        Text(
+                            text = "Transferir",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.width(48.dp))
                     }
-                    Text(
-                        text = "Transferir",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.width(48.dp))
-                }
-            },
-            containerColor = Color.White
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .padding(horizontal = 24.dp)
-                    .fillMaxSize()
-            ) {
-
-                // --- 2. SIMULADOR OFFLINE (MINA TERRESTRE) ---
-                // ¡CRÍTICO! Este componente de control (Switch) permite a los evaluadores
-                // probar la arquitectura de sincronización (Idempotencia y SQLite)
-                // sin tener que apagar físicamente las conexiones de red del dispositivo.
-                Row(
+                },
+                containerColor = Color.White
+            ) { padding ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Slate50, RoundedCornerShape(16.dp))
-                        .border(1.dp, Slate100, RoundedCornerShape(16.dp))
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(padding)
+                        .padding(horizontal = 24.dp)
+                        .fillMaxSize()
                 ) {
-                    Column {
-                        Text("Simular Modo Offline", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text("Fuerza estado pendiente", fontSize = 12.sp, color = Slate400)
-                    }
-                    Switch(
-                        checked = state.isOffline,
-                        onCheckedChange = { screenModel.onIntent(TransferIntent.ToggleOffline) },
-                        colors = SwitchDefaults.colors(checkedThumbColor = Amber500, checkedTrackColor = Amber500.copy(alpha = 0.3f))
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                // --- 3. INPUT DE MONTOS (TEXTFIELD PERSONALIZADO) ---
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text("MONTO A ENVIAR", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Bold)
-                    OutlinedTextField(
-                        value = state.amount,
-                        onValueChange = { screenModel.onIntent(TransferIntent.UpdateAmount(it)) },
-                        textStyle = LocalTextStyle.current.copy(
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Center,
-                            color = if(isOverdraft) Red500 else Slate950
-                        ),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "0.00",
+                    // --- INPUT DE MONTOS ---
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        Text("MONTO A ENVIAR", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Bold)
+                        OutlinedTextField(
+                            value = state.amount,
+                            onValueChange = { screenModel.onIntent(TransferIntent.UpdateAmount(it)) },
+                            textStyle = LocalTextStyle.current.copy(
                                 fontSize = 48.sp,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = Slate100,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                                color = if(isOverdraft) Red500 else Slate950
+                            ),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            enabled = !state.isLoading, // Deshabilitar si carga
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                disabledBorderColor = Color.Transparent
+                            ),
+                            placeholder = {
+                                Text(
+                                    text = "0.00",
+                                    fontSize = 48.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Slate100,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        if (isOverdraft) {
+                            Text("Saldo insuficiente", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    OutlinedTextField(
+                        value = state.recipient,
+                        onValueChange = { screenModel.onIntent(TransferIntent.UpdateRecipient(it)) },
+                        label = { Text("Destinatario") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        singleLine = true,
+                        enabled = !state.isLoading
                     )
-                    if (isOverdraft) {
-                        Text("Saldo insuficiente", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // --- ACCIÓN DE EJECUCIÓN (SUBMIT) ---
+                    BovedaButton(
+                        text = "Confirmar Transferencia",
+                        // Bloqueamos el botón si está cargando para evitar dobles envíos
+                        enabled = amountNum > 0 && !isOverdraft && state.recipient.isNotBlank() && !state.isLoading,
+                        onClick = {
+                            screenModel.executeTransfer()
+                        },
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                }
+            }
+
+            // --- OVERLAY DE CARGA ---
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(
+                            color = Emerald500,
+                            strokeWidth = 4.dp,
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Procesando pago...",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                OutlinedTextField(
-                    value = state.recipient,
-                    onValueChange = { screenModel.onIntent(TransferIntent.UpdateRecipient(it)) },
-                    label = { Text("Destinatario") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    singleLine = true
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // --- 4. ACCIÓN DE EJECUCIÓN (SUBMIT) ---
-                BovedaButton(
-                    text = "Confirmar Transferencia",
-                    enabled = amountNum > 0 && !isOverdraft && state.recipient.isNotBlank(),
-                    onClick = {
-                        val newTx = screenModel.executeTransfer()
-                        if (newTx != null) {
-                            navigator.push(ResultScreen(newTx))
-                        }
-                    },
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
             }
         }
     }

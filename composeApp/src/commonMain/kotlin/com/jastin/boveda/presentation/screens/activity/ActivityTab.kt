@@ -35,7 +35,7 @@ import com.jastin.boveda.presentation.theme.*
  * preserva el estado de la UI (scroll, filtros seleccionados) al intercambiar pestañas.
  * * Enrutamiento de Capas: El acceso al Root Navigator (`parent`) garantiza que las
  * transiciones hacia vistas de detalle se dibujen sobre el BottomNavigationBar.
- * * Optimización de Renderizado: Se utiliza el patrón de 'Derived State' (memoización
+ * * Optimización de Renderizado: Se utiliza el patrón de 'Derived State' (memoization
  * con [remember] sobre listas filtradas) para prevenir recálculos costosos en el
  * Main Thread durante las recomposiciones gráficas.
  */
@@ -99,7 +99,7 @@ object ActivityTab : Tab {
                 contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp)
             ) {
                 items(filteredTransactions) { tx ->
-                    TransactionRow(tx) { navigator.push(DetailScreen(tx)) }
+                    TransactionRow(tx) { navigator.push(DetailScreen(tx.id)) }
                 }
             }
         }
