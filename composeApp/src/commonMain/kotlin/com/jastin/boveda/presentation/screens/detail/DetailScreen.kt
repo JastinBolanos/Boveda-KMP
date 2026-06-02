@@ -3,6 +3,7 @@ package com.jastin.boveda.presentation.screens.detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -13,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -112,6 +114,16 @@ data class DetailScreen(val transactionId: String) : Screen {
                             }
                         }
                     }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    onClick = { navigator.popUntilRoot() },
+                    modifier = Modifier.fillMaxWidth().height(80.dp).padding(bottom = 30.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate900, contentColor = Color.White)
+                ) {
+                    Text("Volver al Inicio", fontWeight = FontWeight.Bold)
                 }
             }
         }

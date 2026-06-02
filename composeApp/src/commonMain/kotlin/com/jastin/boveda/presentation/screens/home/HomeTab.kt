@@ -90,7 +90,7 @@ object HomeTab : Tab {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
-                            modifier = Modifier.size(48.dp).background(Slate900, RoundedCornerShape(12.dp)),
+                            modifier = Modifier.size(48.dp).background(Slate900, RoundedCornerShape(50.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text("J", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
