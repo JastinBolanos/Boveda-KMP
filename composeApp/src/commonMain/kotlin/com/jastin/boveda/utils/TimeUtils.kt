@@ -8,3 +8,5 @@ package com.jastin.boveda.utils
  * motor nativo del hardware (iOS/Android).
  * ========================================================================= */
 expect fun getCurrentTimeMillis(): Long
+expect fun getCurrentTimeFormatted(): String
+expect fun getCurrentDateFormatted(): String

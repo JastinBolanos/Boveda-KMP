@@ -1,5 +1,9 @@
 package com.jastin.boveda.utils
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 /*
  * =========================================================================
  * TIEMPO DEL SISTEMA NATIVO (ANDROID / JVM)
@@ -12,4 +16,13 @@ package com.jastin.boveda.utils
  */
 actual fun getCurrentTimeMillis(): Long {
     return System.currentTimeMillis()
+}
+
+actual fun getCurrentTimeFormatted(): String {
+    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return formatter.format(Date())
+}
+
+actual fun getCurrentDateFormatted(): String {
+    return "Hoy"
 }
