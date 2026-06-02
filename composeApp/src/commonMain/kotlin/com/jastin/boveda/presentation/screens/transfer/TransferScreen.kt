@@ -19,6 +19,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -39,6 +47,9 @@ data class TransferScreen(val currentBalance: Double) : Screen {
 
         val amountNum = state.amount.toDoubleOrNull() ?: 0.0
         val isOverdraft = amountNum > currentBalance
+        val exceedsLimit = amountNum > 500.00
+        val hasError = isOverdraft || exceedsLimit
+        val hasTrailingDot = state.amount.endsWith(".")
 
         LaunchedEffect(state.successTransactionId) {
             state.successTransactionId?.let { txId ->
@@ -85,38 +96,57 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                 ) {
                     // --- INPUT DE MONTOS ---
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Text("MONTO A ENVIAR", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Bold)
-                        OutlinedTextField(
+                        Text(
+                            "MONTO A ENVIAR",
+                            fontSize = 12.sp,
+                            color = Slate400,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        BasicTextField(
                             value = state.amount,
                             onValueChange = { screenModel.onIntent(TransferIntent.UpdateAmount(it)) },
-                            textStyle = LocalTextStyle.current.copy(
+                            textStyle = TextStyle(
                                 fontSize = 48.sp,
                                 fontWeight = FontWeight.ExtraBold,
-                                textAlign = TextAlign.Center,
-                                color = if(isOverdraft) Red500 else Slate950
+                                textAlign = TextAlign.Center
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
-                            enabled = !state.isLoading, // Deshabilitar si carga
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                disabledBorderColor = Color.Transparent
-                            ),
-                            placeholder = {
-                                Text(
-                                    text = "0.00",
-                                    fontSize = 48.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = Slate100,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                            enabled = !state.isLoading,
+                            cursorBrush = SolidColor(Emerald500),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+
+                            visualTransformation = VisualTransformation { text ->
+                                if (text.text.isEmpty()) {
+                                    TransformedText(
+                                        text = AnnotatedString(
+                                            "0",
+                                            spanStyle = SpanStyle(color = Slate100)
+                                        ),
+                                        offsetMapping = object : OffsetMapping {
+                                            override fun originalToTransformed(offset: Int): Int = 1
+                                            override fun transformedToOriginal(offset: Int): Int = 0
+                                        }
+                                    )
+                                } else {
+                                    TransformedText(
+                                        text = AnnotatedString(
+                                            text = text.text,
+                                            spanStyle = SpanStyle(color = if (hasError) Red500 else Slate950)
+                                        ),
+                                        offsetMapping = OffsetMapping.Identity
+                                    )
+                                }
+                            }
                         )
+
                         if (isOverdraft) {
                             Text("Saldo insuficiente", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        } else if (exceedsLimit) {
+                            Text("El monto máximo por envío es de S/ 500.00", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                     }
 
@@ -138,7 +168,7 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                     BovedaButton(
                         text = "Confirmar Transferencia",
                         // Bloqueamos el botón si está cargando para evitar dobles envíos
-                        enabled = amountNum > 0 && !isOverdraft && state.recipient.isNotBlank() && !state.isLoading,
+                        enabled = amountNum > 0 && !hasError && !hasTrailingDot && state.recipient.isNotBlank() && !state.isLoading,
                         onClick = {
                             screenModel.executeTransfer()
                         },

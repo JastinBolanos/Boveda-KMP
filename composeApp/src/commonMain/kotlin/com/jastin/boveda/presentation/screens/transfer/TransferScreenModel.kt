@@ -7,6 +7,8 @@ import com.jastin.boveda.globalTransactionRepository
 import com.jastin.boveda.presentation.model.TimelineEventUi
 import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.model.TxUiStatus
+import com.jastin.boveda.utils.getCurrentDateFormatted
+import com.jastin.boveda.utils.getCurrentTimeFormatted
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -41,7 +43,22 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
     // --- 2. PROCESAMIENTO DE ACCIONES (REDUCER) ---
     fun onIntent(intent: TransferIntent) {
         when (intent) {
-            is TransferIntent.UpdateAmount -> mutableState.update { it.copy(amount = intent.amount) }
+            is TransferIntent.UpdateAmount -> {
+                var input = intent.amount.replace(",", ".")
+
+                if (input.startsWith(".")) {
+                    input = "0$input"
+                }
+
+                // EL BLINDAJE FINANCIERO (REGEX):
+                // ^(0|[1-9]\d*) -> Empieza con 0, o con un número del 1 al 9 (bloquea dobles ceros como "00" o "01")
+                // (\.\d{0,2})?$ -> Puede tener un punto opcional, y si lo tiene, acepta MÁXIMO 2 decimales.
+                val isValidMoneyFormat = input.isEmpty() || input.matches(Regex("^(0|[1-9]\\d*)(\\.\\d{0,2})?\$"))
+
+                if (isValidMoneyFormat) {
+                    mutableState.update { it.copy(amount = input) }
+                }
+            }
             is TransferIntent.UpdateRecipient -> mutableState.update { it.copy(recipient = intent.recipient) }
             is TransferIntent.ClearNavigation -> mutableState.update { it.copy(successTransactionId = null) }
         }
@@ -50,7 +67,8 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
     // --- 3. EJECUCIÓN TRANSACCIONAL (FOREGROUND + FALLBACK) ---
     fun executeTransfer() {
         val amountNum = state.value.amount.toDoubleOrNull() ?: return
-        if (amountNum <= 0 || amountNum > state.value.balance) return
+        // Bloqueo matemático duro: Ni montos negativos, ni sobregiros, ni más de 500
+        if (amountNum <= 0 || amountNum > state.value.balance || amountNum > 500.00) return
 
         screenModelScope.launch {
             mutableState.update { it.copy(isLoading = true) }
@@ -61,8 +79,8 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                 title = state.value.recipient,
                 amount = -amountNum,
                 status = TxUiStatus.PENDING,
-                date = "Hoy",
-                time = "Ahora",
+                date = getCurrentDateFormatted(),
+                time = getCurrentTimeFormatted(),
                 method = "Saldo Bóveda",
                 recipient = state.value.recipient,
                 reference = "REF-${kotlin.random.Random.nextInt(10000, 99999)}",
