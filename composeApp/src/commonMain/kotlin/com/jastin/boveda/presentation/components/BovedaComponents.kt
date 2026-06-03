@@ -21,19 +21,16 @@ import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.formatMoney
 
-/* =========================================================================
+/*
+ * ========================================================================================
  * SISTEMA DE DISEÑO (STATELESS COMPONENTS)
- * Colección de componentes atómicos puramente presentacionales (Dumb Components).
- * * Arquitectura UI: Estos componentes carecen de estado interno (Stateless) y
- * desconocen la lógica de negocio o la capa de datos. Todo su comportamiento y
- * apariencia se dicta estrictamente a través de sus parámetros (State Hoisting).
- * * Acoplamiento: Consumen exclusivamente modelos de vista ([TransactionUiModel]),
- * garantizando que las entidades de dominio/BD no permeen hacia la capa de renderizado.
- * ========================================================================= */
+ * ========================================================================================
+ * Componentes puramente presentacionales ("Dumb").
+ * * State Hoisting: Reciben estado y eventos como parámetros.
+ * * Desacoplamiento: Consumen solo [TransactionUiModel], aislados de la lógica de negocio.
+ */
 
 // --- 1. BOTONES Y ACCIONES ---
-// Controles interactivos principales. El parámetro 'isGhost' maneja la jerarquía
-// visual secundaria sin necesidad de crear un componente nuevo.
 @Composable
 fun BovedaButton(
     text: String,
@@ -59,8 +56,6 @@ fun BovedaButton(
 }
 
 // --- 2. CONTENEDORES (SURFACES) ---
-// Envoltorios base que estandarizan el radio de borde (24.dp) y la sombra (elevation)
-// en toda la aplicación para mantener el 'Look and Feel'.
 @Composable
 fun BovedaCard(
     modifier: Modifier = Modifier,
@@ -69,15 +64,13 @@ fun BovedaCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         content = content
     )
 }
 
 // --- 3. LISTAS Y FILAS DE DATOS ---
-// Renderizadores de colecciones. Contienen inyección lógica de colores y
-// prefijos visuales (+ / -) basados en la positividad del monto y su estado (PENDING).
 @Composable
 fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
     Row(
@@ -85,14 +78,13 @@ fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // (Código interno intacto...)
         Box(
             modifier = Modifier.size(48.dp).background(
-                if (tx.status == TxUiStatus.PENDING) Amber500.copy(alpha = 0.1f) else Slate50,
+                if (tx.status == TxUiStatus.PENDING) Amber500.copy(alpha = 0.1f) else MaterialTheme.colorScheme.background,
                 RoundedCornerShape(12.dp)
             ),
             contentAlignment = Alignment.Center
@@ -105,7 +97,7 @@ fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(tx.title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Slate900)
+            Text(tx.title, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
             Text("${tx.date} • ${tx.time}", fontSize = 12.sp, color = Slate400)
         }
         Column(horizontalAlignment = Alignment.End) {
@@ -114,7 +106,7 @@ fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
                 text = "${if(isPositive) "+" else ""}${formatMoney(tx.amount)}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = if (isPositive) Emerald500 else Slate900
+                color = if (isPositive) Emerald500 else MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = if (tx.status == TxUiStatus.PENDING) "Encolado" else "Exitoso",

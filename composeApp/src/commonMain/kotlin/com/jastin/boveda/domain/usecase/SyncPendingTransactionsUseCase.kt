@@ -3,7 +3,7 @@ package com.jastin.boveda.domain.usecase
 import com.jastin.boveda.data.remote.NetworkClient
 import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.domain.repository.TransactionRepository
-import com.jastin.boveda.presentation.model.TxUiStatus // <- Importante: Importamos el enum de la UI
+import com.jastin.boveda.presentation.model.TxUiStatus
 
 /* =========================================================================
  * CASO DE USO: SINCRONIZACIÓN OFFLINE

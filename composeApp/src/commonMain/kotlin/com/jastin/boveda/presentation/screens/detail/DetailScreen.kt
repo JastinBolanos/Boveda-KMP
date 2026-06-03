@@ -14,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,12 +59,14 @@ data class DetailScreen(val transactionId: String) : Screen {
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { navigator.pop() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
-                    Text("Detalle de Operación", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                    IconButton(onClick = { navigator.pop() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
+                    }
+                    Text("Detalle de Operación", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.width(48.dp))
                 }
             },
-            containerColor = Slate50
+            containerColor = MaterialTheme.colorScheme.background
         ) { padding ->
             Column(modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()) {
 
@@ -82,19 +83,19 @@ data class DetailScreen(val transactionId: String) : Screen {
                     )
 
                     Text(if (liveTransaction.amount > 0) "RECIBISTE" else "ENVIASTE", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Slate400)
-                    Text(formatMoney(abs(liveTransaction.amount)), fontSize = 40.sp, fontWeight = FontWeight.ExtraBold, color = Slate950)
-                    Text(liveTransaction.title, fontSize = 16.sp, color = Slate800)
+                    Text(formatMoney(abs(liveTransaction.amount)), fontSize = 40.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface)
+                    Text(liveTransaction.title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 // --- 2. METADATOS DE LA OPERACIÓN ---
                 BovedaCard(modifier = Modifier.padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(24.dp)) {
                         DetailRow("Estado", if (liveTransaction.status == TxUiStatus.PENDING) "Pendiente" else "Completado")
-                        HorizontalDivider(color = Slate50, modifier = Modifier.padding(vertical = 12.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
                         DetailRow("Fecha", "${liveTransaction.date}, ${liveTransaction.time}")
-                        HorizontalDivider(color = Slate50, modifier = Modifier.padding(vertical = 12.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
                         DetailRow("Método", liveTransaction.method)
-                        HorizontalDivider(color = Slate50, modifier = Modifier.padding(vertical = 12.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
                         DetailRow("Referencia", liveTransaction.reference)
                     }
                 }
@@ -102,13 +103,13 @@ data class DetailScreen(val transactionId: String) : Screen {
                 // --- 3. LÍNEA DE TIEMPO ---
                 BovedaCard {
                     Column(modifier = Modifier.padding(24.dp)) {
-                        Text("Historial de la operación", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
+                        Text("Historial de la operación", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
                         liveTransaction.timeline.forEach { event ->
                             Row(modifier = Modifier.padding(bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(12.dp).background(if(event.done) Emerald500 else Slate400, CircleShape))
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
-                                    Text(event.status, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = Slate950)
+                                    Text(event.status, fontWeight = FontWeight.Medium, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
                                     Text(event.time, fontSize = 12.sp, color = Slate400)
                                 }
                             }
@@ -121,7 +122,10 @@ data class DetailScreen(val transactionId: String) : Screen {
                     onClick = { navigator.popUntilRoot() },
                     modifier = Modifier.fillMaxWidth().height(80.dp).padding(bottom = 30.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Slate900, contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface,
+                        contentColor = MaterialTheme.colorScheme.background
+                    )
                 ) {
                     Text("Volver al Inicio", fontWeight = FontWeight.Bold)
                 }
@@ -133,7 +137,7 @@ data class DetailScreen(val transactionId: String) : Screen {
     private fun DetailRow(label: String, value: String) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(label, color = Slate400, fontSize = 14.sp)
-            Text(value, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Slate950)
+            Text(value, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }

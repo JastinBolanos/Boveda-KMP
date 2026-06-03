@@ -18,7 +18,5 @@ interface TransactionRepository {
     fun saveTransaction(transaction: TransactionUiModel)
 
     // --- 3. MUTACIONES DE SINCRONIZACIÓN ---
-    // ! Performance: Permite al Worker actualizar solo el estado transaccional
-    // sin necesidad de reescribir toda la entidad (ej. PENDING -> COMPLETED).
     fun updateTransactionStatus(id: String, status: TransactionStatus)
 }

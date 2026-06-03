@@ -1,27 +1,34 @@
 package com.jastin.boveda
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.Navigator
+import com.jastin.boveda.data.repository.SqlDelightSettingsRepository
 import com.jastin.boveda.database.BovedaDatabase
 import com.jastin.boveda.database.DatabaseDriverFactory
 import com.jastin.boveda.data.repository.SqlDelightTransactionRepository
+import com.jastin.boveda.domain.repository.SettingsRepository
 import com.jastin.boveda.domain.repository.TransactionRepository
 import com.jastin.boveda.presentation.screens.main.MainScreen
 import com.jastin.boveda.presentation.theme.BovedaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /* =========================================================================
- * PUNTO DE ENTRADA COMPARTIDO (COMPOSITION ROOT)
- * Inicializa la inyección de dependencias global, el sistema de diseño unificado
- * y monta el árbol de navegación base (Voyager).
+ * COMPOSITION ROOT
+ * Inicializa dependencias (DI manual), tema global y navegación (Voyager).
  * ========================================================================= */
 
-// --- 1. SERVICE LOCATOR (MANUAL DI) ---
-// ¡MINA TERRESTRE! Usamos lateinit para inyectar el repositorio globalmente.
-// Esto simplifica la arquitectura al evitar frameworks pesados como Koin en etapas
-// tempranas, pero exige que la inicialización ocurra estrictamente antes del primer render.
+// --- 1. SERVICE LOCATOR ---
+// ¡CRÍTICO! Usamos `lateinit` para evitar Koin por ahora.
+// Debe inicializarse estrictamente antes del primer render.
+
 lateinit var globalTransactionRepository: TransactionRepository
+lateinit var globalSettingsRepository: SettingsRepository
+
+val globalIsDarkMode = MutableStateFlow(false)
 
 @Composable
 fun App(driverFactory: DatabaseDriverFactory) {
@@ -30,18 +37,22 @@ fun App(driverFactory: DatabaseDriverFactory) {
     if (!::globalTransactionRepository.isInitialized) {
         val driver = driverFactory.createDriver()
         val database = BovedaDatabase(driver)
+        val appScope = CoroutineScope(Dispatchers.Default)
+
         globalTransactionRepository = SqlDelightTransactionRepository(
             database = database,
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = appScope
+        )
+
+        globalSettingsRepository = SqlDelightSettingsRepository(
+            database = database,
         )
     }
 
-    BovedaTheme {
+    val isDarkMode by globalIsDarkMode.collectAsState()
+
+    BovedaTheme(isDarkTheme = isDarkMode) {
         // --- 3. ROOT NAVIGATOR ---
-        // ¡CRÍTICO! Se inicializa el Navigator de Voyager de forma pura (sin SlideTransition).
-        // Envolver la raíz en animaciones de transición globales intercepta el ciclo de vida nativo;
-        // si un Tab purga su stack interno, la animación intentará dibujar una vista
-        // ya liberada de memoria, causando un crash fatal ('State is DESTROYED').
         Navigator(MainScreen())
     }
 }

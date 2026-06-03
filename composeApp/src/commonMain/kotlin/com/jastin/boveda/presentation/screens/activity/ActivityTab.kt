@@ -23,21 +23,14 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.jastin.boveda.presentation.components.TransactionRow
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
-import com.jastin.boveda.presentation.theme.*
 
 /*
  * =========================================================================
  * VISTA DE ACTIVIDAD (TAB COMPONENT)
  * =========================================================================
- * Implementación de la pestaña de historial de transacciones.
- * * Estrategia de Navegación: Al implementar [Tab] en lugar de Screen, delegamos
- * el ciclo de vida a Voyager para que mantenga la vista activa en memoria. Esto
- * preserva el estado de la UI (scroll, filtros seleccionados) al intercambiar pestañas.
- * * Enrutamiento de Capas: El acceso al Root Navigator (`parent`) garantiza que las
- * transiciones hacia vistas de detalle se dibujen sobre el BottomNavigationBar.
- * * Optimización de Renderizado: Se utiliza el patrón de 'Derived State' (memoization
- * con [remember] sobre listas filtradas) para prevenir recálculos costosos en el
- * Main Thread durante las recomposiciones gráficas.
+ * Implementa el historial con persistencia de estado mediante [Tab].
+ * Utiliza [remember] para optimizar el filtrado de transacciones y el
+ * navegador padre para asegurar transiciones sobre la barra inferior.
  */
 object ActivityTab : Tab {
 
@@ -68,7 +61,7 @@ object ActivityTab : Tab {
         }
 
         Scaffold(
-            containerColor = Slate50,
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
                 Column(
                     modifier = Modifier
@@ -76,16 +69,16 @@ object ActivityTab : Tab {
                         .statusBarsPadding()
                         .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
-                    Text("Actividad", fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = Slate950, modifier = Modifier.padding(bottom = 16.dp))
+                    Text("Actividad", fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         filters.forEach { filter ->
                             val isSelected = selectedFilter == filter
                             FilterChip(
                                 selected = isSelected,
                                 onClick = { selectedFilter = filter },
-                                label = { Text(filter, color = if (isSelected) Color.White else Slate800, fontWeight = FontWeight.SemiBold) },
-                                colors = FilterChipDefaults.filterChipColors(containerColor = Color.Transparent, selectedContainerColor = Slate950, selectedLabelColor = Color.White),
-                                border = FilterChipDefaults.filterChipBorder(borderColor = if (isSelected) Color.Transparent else Slate100, enabled = true, selected = isSelected),
+                                label = { Text(filter, color = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold) },
+                                colors = FilterChipDefaults.filterChipColors(containerColor = Color.Transparent, selectedContainerColor = MaterialTheme.colorScheme.onSurface, selectedLabelColor = Color.White),
+                                border = FilterChipDefaults.filterChipBorder(borderColor = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline, enabled = true, selected = isSelected),
                                 shape = RoundedCornerShape(24.dp)
                             )
                         }

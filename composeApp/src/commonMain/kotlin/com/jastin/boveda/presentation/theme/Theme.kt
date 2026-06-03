@@ -1,6 +1,7 @@
 package com.jastin.boveda.presentation.theme
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -12,7 +13,7 @@ import androidx.compose.ui.graphics.Color
  * permitimos que los componentes estándar de Material3 reaccionen automáticamente
  * a nuestra identidad visual de marca sin tener que estilizarlos uno por uno.
  * ========================================================================= */
-private val BovedaColorScheme = lightColorScheme(
+private val LightColorScheme = lightColorScheme(
     primary = Emerald500,
     onPrimary = Slate950,
     secondary = Teal400,
@@ -21,10 +22,24 @@ private val BovedaColorScheme = lightColorScheme(
     onSurface = Slate900
 )
 
+private val DarkColorScheme = darkColorScheme(
+    primary = Emerald500,
+    onPrimary = Color.White,
+    secondary = Teal400,
+    background = PlomoBackground,
+    surface = PlomoSurface,
+    onSurface = PlomoText
+)
+
 @Composable
-fun BovedaTheme(content: @Composable () -> Unit) {
+fun BovedaTheme(
+    isDarkTheme: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (isDarkTheme) DarkColorScheme else LightColorScheme
+
     MaterialTheme(
-        colorScheme = BovedaColorScheme,
+        colorScheme = colorScheme,
         content = content
     )
 }

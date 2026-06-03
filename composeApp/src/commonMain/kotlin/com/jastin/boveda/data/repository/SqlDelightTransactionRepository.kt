@@ -22,14 +22,11 @@ import kotlinx.coroutines.launch
  * =========================================================================
  * REPOSITORIO DE TRANSACCIONES (SINGLE SOURCE OF TRUTH)
  * =========================================================================
- * Implementación concreta del contrato [TransactionRepository] utilizando SQLDelight.
- * * Decisiones Arquitectónicas:
- * 1. Single Source of Truth: La UI nunca guarda estados locales, observa pasivamente
- * los StateFlows expuestos por esta clase.
- * 2. Layer Mapping: Se aíslan los datos crudos de SQLite hacia modelos de vista limpios
- * para evitar acoplamiento de capas.
- * 3. Reactividad: StateFlow con caché de 5 segundos ('WhileSubscribed(5000)') protege
- * la memoria y previene re-consultas durante cambios de configuración (rotación/minimizado).
+ * Implementa [TransactionRepository] con SQLDelight bajo 3 principios:
+ * 1. SSOT: La UI solo observa pasivamente los StateFlows.
+ * 2. Mapeo de Capas: Aísla los datos de SQLite usando modelos de vista.
+ * 3. Reactividad: `WhileSubscribed(5000)` previene re-consultas en la BD
+ * al rotar o minimizar la aplicación.
  */
 class SqlDelightTransactionRepository(
     database: BovedaDatabase,

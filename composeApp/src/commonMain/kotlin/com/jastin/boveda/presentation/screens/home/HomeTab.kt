@@ -78,7 +78,7 @@ object HomeTab : Tab {
         val hasInsufficientFunds = balance <= 0
 
         Scaffold(
-            containerColor = Slate50,
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
                 Row(
                     modifier = Modifier
@@ -98,12 +98,12 @@ object HomeTab : Tab {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text("Bienvenido de vuelta", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Medium)
-                            Text("Jastin Abel", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Slate950)
+                            Text("Jastin Abel", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
 
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Slate950, modifier = Modifier.size(28.dp))
+                        Icon(Icons.Default.Menu, contentDescription = "Menu", tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(28.dp))
                     }
                 }
             }
@@ -149,7 +149,7 @@ object HomeTab : Tab {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Actividad Reciente", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Slate950)
+                    Text("Actividad Reciente", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
                     TextButton(onClick = { tabNavigator.current = ActivityTab }) {
                         Text("Ver todo", color = Emerald500, fontWeight = FontWeight.SemiBold)
                     }

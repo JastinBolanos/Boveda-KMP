@@ -1,0 +1,10 @@
+CREATE TABLE AppConfig (
+    key TEXT PRIMARY KEY NOT NULL,
+    value INTEGER NOT NULL
+);
+
+getThemePreference:
+SELECT value FROM AppConfig WHERE key = 'dark_mode';
+
+saveThemePreference:
+INSERT OR REPLACE INTO AppConfig (key, value) VALUES ('dark_mode', ?);
