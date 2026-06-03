@@ -15,7 +15,7 @@ actual class DatabaseDriverFactory {
     // al sistema de archivos local. Accedemos directamente a las APIs de
     // SQLite de Apple mediante 'NativeSqliteDriver'.
     actual fun createDriver(): SqlDriver {
-        // ¡CRÍTICO! 'BovedaDatabase.Schema' es generado automáticamente por SQLDelight.
+        // NOTA:'BovedaDatabase.Schema' es generado automáticamente por SQLDelight.
         // Si modificas el archivo .sq, el driver gestionará las migraciones
         // de base de datos de forma atómica en el primer acceso a la app.
         return NativeSqliteDriver(BovedaDatabase.Schema, "boveda_local.db")

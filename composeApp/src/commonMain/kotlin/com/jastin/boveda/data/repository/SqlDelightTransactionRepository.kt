@@ -18,16 +18,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * =========================================================================
+/* =========================================================================
  * REPOSITORIO DE TRANSACCIONES (SINGLE SOURCE OF TRUTH)
- * =========================================================================
- * Implementa [TransactionRepository] con SQLDelight bajo 3 principios:
- * 1. SSOT: La UI solo observa pasivamente los StateFlows.
- * 2. Mapeo de Capas: Aísla los datos de SQLite usando modelos de vista.
- * 3. Reactividad: `WhileSubscribed(5000)` previene re-consultas en la BD
- * al rotar o minimizar la aplicación.
- */
+ * * Implementación de [TransactionRepository] mediante SQLDelight:
+ * 1. SSOT: La UI observa exclusivamente estados reactivos (StateFlow).
+ * 2. Mapeo: Aísla el modelo de persistencia (SQL) del modelo de vista (UI).
+ * 3. Reactividad: `WhileSubscribed(5000)` evita consultas redundantes ante
+ * cambios de configuración (rotación/pausa).
+ * ========================================================================= */
 class SqlDelightTransactionRepository(
     database: BovedaDatabase,
     private val scope: CoroutineScope
@@ -38,9 +36,9 @@ class SqlDelightTransactionRepository(
     // --- 1. LECTURA Y MAPEO DE CAPAS ---
     override val transactions: StateFlow<List<TransactionUiModel>> = queries.selectAllTransactions()
         .asFlow()
-        // ¡CRÍTICO! El mapToList debe ir en Dispatchers.IO.
-        // Si lo dejas en el hilo principal (Main), la app congelará los 120 Hz de la pantalla
-        // al leer bases de datos grandes.
+        // NOTA: La operación `mapToList` debe ejecutarse en `Dispatchers.IO` para
+        // evitar el bloqueo del hilo principal (UI Thread), garantizando la
+        // fluidez de los 120 Hz durante consultas pesadas a la base de datos.
         .mapToList(Dispatchers.IO)
         .map { entityList ->
             entityList.map { entity ->
@@ -59,13 +57,14 @@ class SqlDelightTransactionRepository(
             }
         }.stateIn(
             scope = scope,
-            // ¡MINA TERRESTRE! WhileSubscribed(5000) evita que el StateFlow se destruya y
-            // vuelva a consultar la BD si el usuario simplemente rota la pantalla del celular.
+            // NOTA: Se emplea WhileSubscribed(5000) para evitar la reinicialización
+            // del flujo y consultas redundantes a la BD durante cambios de configuración
+            // del dispositivo (ej. rotación).
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
-    // --- 2. MOTOR DE CÁLCULO DE SALDO ---
+    // --- MOTOR DE CÁLCULO DE SALDO ---
     override val currentBalance: StateFlow<Double> = transactions.map { list ->
         val initialBalance = 1500.00
         val totalSpent = list.sumOf { it.amount }
@@ -76,7 +75,7 @@ class SqlDelightTransactionRepository(
         initialValue = 1500.00
     )
 
-    // --- 3. ESCRITURA (IDEMPOTENCIA Y ENCOLAMIENTO) ---
+    // --- ESCRITURA (IDEMPOTENCIA Y ENCOLAMIENTO) ---
     override fun saveTransaction(transaction: TransactionUiModel) {
         scope.launch(Dispatchers.IO) {
             val currentTimestamp = getCurrentTimeMillis()

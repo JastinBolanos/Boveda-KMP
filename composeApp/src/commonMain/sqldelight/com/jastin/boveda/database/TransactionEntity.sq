@@ -6,7 +6,7 @@
  * ========================================================================= */
 
 -- --- 1. MODELADO DE ENTIDAD ---
--- ¡MINA TERRESTRE! Usamos REAL para el monto por simplicidad en KMP.
+-- Usamos REAL para el monto por simplicidad en KMP.
 -- Nota: En sistemas financieros de alta precisión, se recomienda cambiar esto a
 -- INTEGER (almacenar centavos) para evitar errores de redondeo de coma flotante.
 CREATE TABLE TransactionEntity (

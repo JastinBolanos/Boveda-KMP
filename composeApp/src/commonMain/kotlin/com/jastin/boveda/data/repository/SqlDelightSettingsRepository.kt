@@ -3,6 +3,13 @@ package com.jastin.boveda.data.repository
 import com.jastin.boveda.database.BovedaDatabase
 import com.jastin.boveda.domain.repository.SettingsRepository
 
+/* =========================================================================
+ * REPOSITORIO DE AJUSTES (SQLDELIGHT)
+ * Gestiona la persistencia de configuraciones globales:
+ * * Escritura Síncrona: Asegura el guardado inmediato mediante transacciones.
+ * * Tolerancia a Fallos: Silencia errores de I/O para garantizar la
+ * continuidad del arranque de la UI.
+ * ========================================================================= */
 class SqlDelightSettingsRepository(
     private val database: BovedaDatabase
 ) : SettingsRepository {
