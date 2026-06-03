@@ -21,13 +21,13 @@ import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.formatMoney
 
-/*
- * ========================================================================================
- * SISTEMA DE DISEÑO (STATELESS COMPONENTS)
- * ========================================================================================
- * Componentes puramente presentacionales ("Dumb").
- * * State Hoisting: Reciben estado y eventos como parámetros.
- * * Desacoplamiento: Consumen solo [TransactionUiModel], aislados de la lógica de negocio.
+/* =========================================================================
+ * DESIGN SYSTEM (STATELESS COMPONENTS)
+ * =========================================================================
+ * Componentes de presentación (Dumb).
+ * * State Hoisting: Inyectan estado y eventos mediante parámetros.
+ * * Desacoplamiento: Consumen únicamente [TransactionUiModel], delegando
+ *   toda lógica de negocio a capas superiores.
  */
 
 // --- 1. BOTONES Y ACCIONES ---

@@ -5,9 +5,8 @@ import kotlin.math.round
 
 /* =========================================================================
  * UTILIDAD DE FORMATEO FINANCIERO (PURE FUNCTION)
- * Centraliza la lógica matemática para la presentación de divisas.
- * Arquitectura: Al ser una función pura y aislada, previene que las vistas
- * (Compose) o los modelos de datos asuman responsabilidades de parseo de strings.
+ * Centraliza la lógica de presentación de divisas. Al ser una función pura,
+ * garantiza que las vistas (UI) permanezcan agnósticas a la lógica de strings.
  * ========================================================================= */
 fun formatMoney(amount: Double): String {
     val isNegative = amount < 0

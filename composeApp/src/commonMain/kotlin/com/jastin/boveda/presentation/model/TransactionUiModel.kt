@@ -2,14 +2,11 @@ package com.jastin.boveda.presentation.model
 
 /* =========================================================================
  * MODELOS DE PRESENTACIÓN (VIEW STATE)
- * Representación puramente visual de los datos de la aplicación.
- * * Separación de Responsabilidades: A diferencia de las entidades de dominio
- * o los esquemas de BD, estos modelos contienen datos pre-procesados (como
- * fechas y textos formateados como [String]).
- * * Rendimiento UI: Al delegar el cálculo, parseo y formateo a capas inferiores
- * (o a la capa de Mapeo), garantizamos que Jetpack Compose actúe como una UI
- * "tonta", limitándose exclusivamente a renderizar componentes sin ejecutar
- * lógica pesada durante la recomposición.
+ * Representación visual optimizada de los datos.
+ * * Separación de Responsabilidades: Contienen datos pre-procesados (ej. Strings formateados),
+ *   aislando las entidades de dominio y el esquema de BD.
+ * * Rendimiento UI: Al delegar el formateo a capas inferiores, se garantiza que
+ *   Compose actúe como una UI pasiva, evitando lógica pesada durante la recomposición.
  * ========================================================================= */
 
 // --- 1. ESTADOS DE INTERFAZ ---

@@ -4,10 +4,9 @@ import androidx.compose.ui.graphics.Color
 
 /* =========================================================================
  * DESIGN SYSTEM: TOKENS DE COLOR (PALETA BASE)
- * Definición estricta de la paleta cromática de Bóveda (Tailwind-inspired).
- * Arquitectura UI: Prohíbe el uso de valores hexadecimales aislados ("Hardcoded")
- * en los componentes. Cualquier vista debe consumir estos tokens para
- * garantizar consistencia de marca y escalabilidad (preparación para Dark Mode).
+ * Define la paleta cromática (estilo Tailwind) con roles semánticos estrictos.
+ * Prohíbe el uso de valores hexadecimales hardcodeados, garantizando
+ * consistencia de marca, escalabilidad y soporte para Dark Mode.
  * ========================================================================= */
 val Slate950 = Color(0xFF040A24)
 val Slate900 = Color(0xFF0F172A)
