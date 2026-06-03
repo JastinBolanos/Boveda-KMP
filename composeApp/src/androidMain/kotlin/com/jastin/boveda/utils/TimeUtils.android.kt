@@ -4,16 +4,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/*
- * =========================================================================
- * TIEMPO DEL SISTEMA NATIVO (ANDROID / JVM)
- * =========================================================================
- * Implementación de la captura de tiempo en la plataforma Android.
- * La decisión arquitectónica de crear este puente (expect/actual) en lugar
- * de usar librerías compartidas (como kotlinx.datetime) evita colisiones
- * de nombres en el compilador ('Name Clash') y garantiza acceso directo,
- * rápido y sin dependencias externas al reloj interno del dispositivo.
- */
+/* =========================================================================
+ * PROVEEDOR DE TIEMPO (ANDROID / JVM)
+ * Implementa la captura de tiempo nativa para la plataforma Android:
+ * * Abstracción (Expect/Actual): Evita colisiones de nombres de librerías
+ * y reduce la huella del binario.
+ * * Optimización: Accede directamente al reloj del sistema, garantizando
+ * latencia mínima y eliminando dependencias externas innecesarias.
+ * ========================================================================= */
 actual fun getCurrentTimeMillis(): Long {
     return System.currentTimeMillis()
 }
