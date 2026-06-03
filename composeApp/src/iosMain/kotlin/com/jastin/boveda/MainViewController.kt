@@ -8,9 +8,8 @@ import com.jastin.boveda.database.DatabaseDriverFactory
  * ========================================================================= */
 
 // --- 1. ENTRY POINT DE IOS ---
-// ¡CRÍTICO! Esta función es invocada por el 'ContentView' de SwiftUI/UIKit.
+// NOTA: Esta función es invocada por el 'ContentView' de SwiftUI/UIKit.
 // Si la borras, la app no iniciará la UI.
 fun MainViewController() = ComposeUIViewController {
-    // ! Inyección: Pasamos la implementación nativa del driver (iOS) a la App.
     App(driverFactory = DatabaseDriverFactory())
 }

@@ -9,16 +9,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.jastin.boveda.database.DatabaseDriverFactory
 import com.jastin.boveda.utils.AndroidPlatformContext
 
-/*
- * =========================================================================
- * PUNTO DE ENTRADA NATIVO (ANDROID HOST)
- * =========================================================================
- * Actúa como el contenedor base para la interfaz gráfica compartida (Compose Multiplatform).
- * Arquitectónicamente, este es el límite del sistema (System Boundary), el único
- * lugar donde está permitido interactuar directamente con el SO. Aquí capturamos
- * el Context de Android y lo inyectamos hacia el dominio agnóstico de [App]
- * para que pueda construir la base de datos física.
- */
+/* =========================================================================
+ * HOST NATIVO DE LA APLICACIÓN (ANDROID)
+ * Punto de entrada base para el sistema de interfaz compartida (Compose MP):
+ * * Frontera del Sistema: Límite arquitectónico donde reside la interacción
+ * directa con el SO.
+ * * Inyección de Dependencias: Captura y provee él [Context] al dominio
+ * agnóstico, facilitando la inicialización de la persistencia (SQL).
+ * ========================================================================= */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -31,15 +29,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
+/* =========================================================================
+ * NOTA ARQUITECTÓNICA: LIMITACIONES DE PREVIEW
  * =========================================================================
- * NOTA ARQUITECTÓNICA SOBRE PREVIEWS
- * =========================================================================
- * La vista previa de la app completa se mantiene intencionalmente vacía.
- * El motor de Compose Preview opera en un entorno de pruebas estático (Mock) que
- * carece de un Context de aplicación real. Al requerir acceso al disco duro
- * para SQLite, intentar renderizar la raíz causará un fallo de compilación gráfica.
- * Las pruebas visuales deben realizarse sobre componentes visuales aislados (Dumb Components).
+ * La vista previa de la raíz está deshabilitada: el motor de Compose opera
+ * en un entorno estático (Mock) sin acceso al Context o al sistema de archivos.
+ * * * Implicación: Intentar instanciar la jerarquía completa dispara errores
+ * de acceso a SQLite.
+ * * Estrategia: Las pruebas visuales deben limitarse a componentes
+ * presentacionales (Dumb) aislados de dependencias de persistencia.
  */
 @Preview
 @Composable

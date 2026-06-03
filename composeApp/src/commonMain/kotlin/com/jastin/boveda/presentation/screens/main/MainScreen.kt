@@ -32,9 +32,8 @@ import kotlinx.coroutines.launch
 
 /* =========================================================================
  * ROOT NAVIGATOR & MAIN SCAFFOLD
- * Contenedor principal de la aplicación posterior al Splash Screen.
- * Administra el enrutamiento interno mediante Tabs y aloja el sistema global de
- * navegación (Bottom Navigation Bar) y el Drawer lateral.
+ * Contenedor principal tras el Splash. Gestiona el enrutamiento interno
+ * (Tabs), la navegación global (Bottom Bar) y el Drawer lateral.
  * ========================================================================= */
 
 val LocalMenuDrawerState = compositionLocalOf<DrawerState> { error("DrawerState no provisto") }

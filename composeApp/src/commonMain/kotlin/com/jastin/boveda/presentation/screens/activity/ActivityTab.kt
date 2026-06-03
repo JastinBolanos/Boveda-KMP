@@ -24,13 +24,13 @@ import com.jastin.boveda.presentation.components.TransactionRow
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 
-/*
- * =========================================================================
+/* =========================================================================
  * VISTA DE ACTIVIDAD (TAB COMPONENT)
  * =========================================================================
- * Implementa el historial con persistencia de estado mediante [Tab].
- * Utiliza [remember] para optimizar el filtrado de transacciones y el
- * navegador padre para asegurar transiciones sobre la barra inferior.
+ * Implementa el historial financiero mediante el contrato [Tab].
+ * Optimiza el filtrado de datos con [remember] y utiliza el navegador
+ * superior (parent) para permitir transiciones a pantalla completa fuera
+ * del alcance del BottomNavigation.
  */
 object ActivityTab : Tab {
 

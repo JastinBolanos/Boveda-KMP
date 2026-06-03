@@ -28,11 +28,11 @@ import com.jastin.boveda.utils.formatMoney
 import kotlin.math.abs
 
 /* =========================================================================
- * PANTALLA DE DETALLE DE TRANSACCIÓN (STATELESS SCREEN)
- * Renderiza la información exhaustiva de un movimiento financiero.
- * Al inyectar él [TransactionUiModel] directamente por el constructor de Voyager,
- * eliminamos la necesidad de un ViewModel local y evitamos golpear SQLite
- * con re-consultas innecesarias. La vista anterior ya digirió los datos.
+ * PANTALLA DE DETALLE DE TRANSACCIÓN (STATELESS)
+ * Renderiza la información de un movimiento financiero. Al inyectar él
+ * [TransactionUiModel] directamente a través de Voyager, se elimina la
+ * dependencia de un ViewModel local y se optimiza el acceso a datos,
+ * evitando re-consultas innecesarias a la persistencia.
  * ========================================================================= */
 
 data class DetailScreen(val transactionId: String) : Screen {
@@ -70,7 +70,7 @@ data class DetailScreen(val transactionId: String) : Screen {
         ) { padding ->
             Column(modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()) {
 
-                // --- 1. IMPACTO FINANCIERO (HERO SECTION) ---
+                // --- IMPACTO FINANCIERO (HERO SECTION) ---
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
 
                     val isPending = liveTransaction.status == TxUiStatus.PENDING
@@ -87,7 +87,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                     Text(liveTransaction.title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                 }
 
-                // --- 2. METADATOS DE LA OPERACIÓN ---
+                // --- METADATOS DE LA OPERACIÓN ---
                 BovedaCard(modifier = Modifier.padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(24.dp)) {
                         DetailRow("Estado", if (liveTransaction.status == TxUiStatus.PENDING) "Pendiente" else "Completado")
@@ -100,7 +100,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                     }
                 }
 
-                // --- 3. LÍNEA DE TIEMPO ---
+                // --- LÍNEA DE TIEMPO ---
                 BovedaCard {
                     Column(modifier = Modifier.padding(24.dp)) {
                         Text("Historial de la operación", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))

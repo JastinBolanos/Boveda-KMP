@@ -22,8 +22,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * ========================================================================= */
 
 // --- 1. SERVICE LOCATOR ---
-// ¡CRÍTICO! Usamos `lateinit` para evitar Koin por ahora.
-// Debe inicializarse estrictamente antes del primer render.
+// NOTA: Se emplea `lateinit` como solución temporal para inyección de
+// dependencias manual. Debe inicializarse estrictamente antes del primer
+// ciclo de renderizado de la aplicación.
 
 lateinit var globalTransactionRepository: TransactionRepository
 lateinit var globalSettingsRepository: SettingsRepository

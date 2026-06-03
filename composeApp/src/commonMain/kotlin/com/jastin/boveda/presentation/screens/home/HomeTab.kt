@@ -54,26 +54,28 @@ object HomeTab : Tab {
     @Composable
     override fun Content() {
 
-        // --- 1. ENRUTADORES Y PUENTES (COMPOSITION LOCALS) ---
-        // ¡CRÍTICO! Usamos navigator.parent para que las pantallas nuevas se abran
-        // a pantalla completa y no queden atrapadas debajo del BottomNavigation.
+        // --- ENRUTADORES Y PUENTES (COMPOSITION LOCALS) ---
+        // NOTA: Se utiliza `navigator.parent` para el stack de navegación superior,
+        // asegurando que las transiciones a pantalla completa no queden restringidas
+        // por el scaffold del BottomNavigation.
         val navigator = LocalNavigator.currentOrThrow.parent ?: LocalNavigator.currentOrThrow
         val tabNavigator = LocalTabNavigator.current
 
-        // ¡MINA TERRESTRE! El Drawer no existe en este Tab, existe en el MainScreen.
-        // Usamos CompositionLocal (LocalMenuDrawerState) para atravesar el árbol de
-        // dependencias y poder abrirlo desde aquí sin tener que pasar callbacks infinitos.
+        // PROVEEDOR DE NAVEGACIÓN (DRAWER)
+        // Accede al estado global del Drawer mediante CompositionLocal.
+        // Patrón: Evita el 'Prop Drilling' permitiendo la activación del Drawer
+        // desde cualquier subcomponente de la jerarquía de UI.
         val drawerState = LocalMenuDrawerState.current
         val scope = rememberCoroutineScope()
 
-        // --- 2. OBSERVACIÓN DEL DOMINIO ---
+        // --- OBSERVACIÓN DEL DOMINIO ---
         val repository = com.jastin.boveda.globalTransactionRepository
         val balanceState = repository.currentBalance.collectAsState()
         val balance = balanceState.value
         val allTransactionsState = repository.transactions.collectAsState()
         val transactions = allTransactionsState.value.take(3)
 
-        // --- 3. REGLAS DE NEGOCIO VISUALES ---
+        // --- REGLAS DE NEGOCIO VISUALES ---
         val displayBalance = max(0.0, balance)
         val hasInsufficientFunds = balance <= 0
 
