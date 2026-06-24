@@ -1,30 +1,90 @@
-# --- Entorno Local y Llaves ---
+# ==================================================
+# BOVEDA KMP - .gitignore OFICIAL
+# Kotlin Multiplatform | Compose Multiplatform
+# Android + iOS | SQLDelight | Clean Architecture
+# ==================================================
+
+# --------------------------
+# GRADLE
+# --------------------------
+.gradle/
+build/
+**/build/
+gradle-app.setting
+.gradletasknamecache
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# --------------------------
+# KOTLIN / KMP
+# --------------------------
+.kotlin/
+**/*.kt~
+**/*.kts~
+
+# --------------------------
+# ANDROID
+# --------------------------
 local.properties
-keystore.properties
+*.apk
+*.aab
+*.idsig
+captures/
+.externalNativeBuild
+.cxx/
+
+# --------------------------
+# IOS / XCODE
+# --------------------------
+**/xcuserdata/
+**/*.xcuserstate
+**/*.xcscmblueprint
+DerivedData/
+Pods/
+Podfile.lock
+*.ipa
+
+# --------------------------
+# IDEs - CONFIGURACIÓN PERSONAL
+# --------------------------
+.idea/
+!.idea/codeStyles/
+!.idea/runConfigurations/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.fleet/
+
+# --------------------------
+# SISTEMA OPERATIVO
+# --------------------------
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --------------------------
+# LOGS Y TEMPORALES
+# --------------------------
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# --------------------------
+# SEGURIDAD - NUNCA SUBIR
+# --------------------------
+.env
+.env.*
+secrets.*
 *.jks
 *.keystore
-
-# --- Archivos de IDE y Caché ---
-.idea
-*.iml
-.kotlin
-captures
-.DS_Store
-
-# --- Carpetas de Compilación de Gradle ---
-.gradle
-**/build/
-.externalNativeBuild
-.cxx
-
-# --- Archivos de Node (Si usas herramientas JS) ---
-node_modules/
-
-# --- Configuraciones Nativas de iOS (Limpieza de Xcode) ---
-xcuserdata
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-!*.xcworkspace/contents.xcworkspacedata
-**/xcshareddata/WorkspaceSettings.xcsettings
+*.p12
+*.pem
+keys/
