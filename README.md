@@ -31,7 +31,7 @@ Diseño orientado a la fluidez transaccional, integrando micro-interacciones de 
 
 ---
 
-## ✅ Características Clave Resumidas
+## ✅ Características
 * 🔹 **100% Offline First** — Funciona sin internet, sincroniza automáticamente al volver la señal.
 * 🔹 **Idempotencia garantizada** — Diseñado para que sea IMPOSIBLE duplicar transacciones.
 * 🔹 **Estado unidireccional** — La UI solo reacciona a cambios de la base de datos local.
