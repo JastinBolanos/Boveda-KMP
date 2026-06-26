@@ -7,8 +7,8 @@ import com.jastin.boveda.domain.repository.SettingsRepository
  * REPOSITORIO DE AJUSTES (SQLDELIGHT)
  * Gestiona la persistencia de configuraciones globales:
  * * Escritura Síncrona: Asegura el guardado inmediato mediante transacciones.
- * * Tolerancia a Fallos: Silencia errores de I/O para garantizar la
- * continuidad del arranque de la UI.
+ * * Tolerancia a Fallos: Captura errores de I/O para garantizar la
+ * continuidad del arranque de la UI sin perder trazabilidad en logs.
  * ========================================================================= */
 class SqlDelightSettingsRepository(
     private val database: BovedaDatabase
@@ -23,6 +23,9 @@ class SqlDelightSettingsRepository(
                 com.jastin.boveda.globalIsDarkMode.value = savedTheme == 1L
             }
         } catch (e: Exception) {
+            // Evitamos el "Swallowed Exception".
+            // No detenemos la app, pero dejamos un registro para el desarrollador.
+            println("⚙️ Database Warning: No se pudo cargar el tema -> ${e.message}")
         }
     }
 
@@ -33,6 +36,7 @@ class SqlDelightSettingsRepository(
                 queries.saveThemePreference(if (isDark) 1L else 0L)
             }
         } catch (e: Exception) {
+            println("⚙️ Database Warning: No se pudo guardar el tema -> ${e.message}")
         }
     }
 }

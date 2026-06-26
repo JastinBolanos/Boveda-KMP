@@ -2,13 +2,10 @@ package com.jastin.boveda.presentation.screens.transfer
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.jastin.boveda.domain.model.Transaction
 import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.globalTransactionRepository
-import com.jastin.boveda.presentation.model.TimelineEventUi
-import com.jastin.boveda.presentation.model.TransactionUiModel
-import com.jastin.boveda.presentation.model.TxUiStatus
-import com.jastin.boveda.utils.getCurrentDateFormatted
-import com.jastin.boveda.utils.getCurrentTimeFormatted
+import com.jastin.boveda.utils.getCurrentTimeMillis
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -51,9 +48,10 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                 }
 
                 // EL BLINDAJE FINANCIERO (REGEX):
-                // ^(0|[1-9]\d*) -> Empieza con 0, o con un número del 1 al 9 (bloquea dobles ceros como "00" o "01")
-                // (\.\d{0,2})?$ -> Puede tener un punto opcional, y si lo tiene, acepta MÁXIMO 2 decimales.
-                val isValidMoneyFormat = input.isEmpty() || input.matches(Regex("^(0|[1-9]\\d*)(\\.\\d{0,2})?\$"))
+                // ARREGLO LINTER: Se simplificaron los caracteres de escape (\$)
+                // ^(0|[1-9]\d*) -> Empieza con 0, o con un número del 1 al 9
+                // (\.\d{0,2})?$ -> Puede tener un punto opcional con máximo 2 decimales.
+                val isValidMoneyFormat = input.isEmpty() || input.matches(Regex("""^(0|[1-9]\d*)(\.\d{0,2})?$"""))
 
                 if (isValidMoneyFormat) {
                     mutableState.update { it.copy(amount = input) }
@@ -74,20 +72,16 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
             mutableState.update { it.copy(isLoading = true) }
             val safeId = "tx_${kotlin.random.Random.nextLong(100000, 999999)}"
 
-            val newTx = TransactionUiModel(
+            // ARREGLO ARQUITECTÓNICO: Mapeo UI -> DOMAIN
+            // El ScreenModel empaqueta los datos de la UI en una Entidad de Dominio
+            // pura para enviarla al Repositorio. Toda la "basura visual" se descartó.
+            val newTx = Transaction(
                 id = safeId,
-                title = state.value.recipient,
                 amount = -amountNum,
-                status = TxUiStatus.PENDING,
-                date = getCurrentDateFormatted(),
-                time = getCurrentTimeFormatted(),
-                method = "Saldo Bóveda",
-                recipient = state.value.recipient,
-                reference = "REF-${kotlin.random.Random.nextInt(10000, 99999)}",
-                timeline = listOf(
-                    TimelineEventUi("Iniciada", "Ahora", true),
-                    TimelineEventUi("Procesando en red", "--:--", false)
-                )
+                receiverName = state.value.recipient,
+                receiverAccount = "Cuenta Local",
+                status = TransactionStatus.PENDING,
+                timestamp = getCurrentTimeMillis()
             )
             repository.saveTransaction(newTx)
 
@@ -98,7 +92,7 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                 if (isSuccess) {
                     repository.updateTransactionStatus(safeId, TransactionStatus.COMPLETED)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 println("Fallo en primer plano. El Worker lo tomará.")
             }
 

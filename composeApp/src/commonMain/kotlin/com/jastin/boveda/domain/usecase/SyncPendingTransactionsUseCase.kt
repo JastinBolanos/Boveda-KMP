@@ -3,7 +3,6 @@ package com.jastin.boveda.domain.usecase
 import com.jastin.boveda.data.remote.NetworkClient
 import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.domain.repository.TransactionRepository
-import com.jastin.boveda.presentation.model.TxUiStatus
 
 /* =========================================================================
  * CASO DE USO: SINCRONIZACIÓN OFFLINE
@@ -18,7 +17,8 @@ class SyncPendingTransactionsUseCase(
     // --- 1. MOTOR DE PROCESAMIENTO ---
     suspend operator fun invoke() {
         val allTransactions = repository.transactions.value
-        val pendingTransactions = allTransactions.filter { it.status == TxUiStatus.PENDING }
+
+        val pendingTransactions = allTransactions.filter { it.status == TransactionStatus.PENDING }
 
         if (pendingTransactions.isEmpty()) return
 

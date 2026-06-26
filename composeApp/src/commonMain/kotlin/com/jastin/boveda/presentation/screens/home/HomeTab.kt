@@ -25,7 +25,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.presentation.components.TransactionRow
+import com.jastin.boveda.presentation.model.TransactionUiModel
+import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.activity.ActivityTab
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 import com.jastin.boveda.presentation.screens.transfer.TransferScreen
@@ -73,7 +76,24 @@ object HomeTab : Tab {
         val balanceState = repository.currentBalance.collectAsState()
         val balance = balanceState.value
         val allTransactionsState = repository.transactions.collectAsState()
-        val transactions = allTransactionsState.value.take(3)
+
+        // ADAPTACIÓN ARQUITECTÓNICA (PRESENTATION MAPPER)
+        // Como el dominio ahora expone entidades puras desacopladas de la UI, interceptamos
+        // el flujo y transformamos las transacciones al modelo visual requerido por el componente.
+        val transactions = allTransactionsState.value.take(3).map { tx ->
+            TransactionUiModel(
+                id = tx.id,
+                title = tx.receiverName,
+                amount = tx.amount,
+                status = if (tx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
+                date = "Hoy",
+                time = "00:00",
+                method = "Saldo Bóveda",
+                recipient = tx.receiverName,
+                reference = "REF-${tx.id.take(6)}",
+                timeline = emptyList()
+            )
+        }
 
         // --- REGLAS DE NEGOCIO VISUALES ---
         val displayBalance = max(0.0, balance)
@@ -164,7 +184,6 @@ object HomeTab : Tab {
                     items(transactions) { tx ->
                         TransactionRow(tx) { navigator.push(DetailScreen(tx.id)) }
                     }
-
                 }
             }
         }

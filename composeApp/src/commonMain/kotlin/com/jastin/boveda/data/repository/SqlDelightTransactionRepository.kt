@@ -3,10 +3,9 @@ package com.jastin.boveda.data.repository
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.jastin.boveda.database.BovedaDatabase
+import com.jastin.boveda.domain.model.Transaction
 import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.domain.repository.TransactionRepository
-import com.jastin.boveda.presentation.model.TransactionUiModel
-import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.utils.getCurrentTimeMillis
 import com.jastin.boveda.utils.BovedaSyncWorker
 import kotlinx.coroutines.CoroutineScope
@@ -21,10 +20,8 @@ import kotlinx.coroutines.launch
 /* =========================================================================
  * REPOSITORIO DE TRANSACCIONES (SINGLE SOURCE OF TRUTH)
  * * Implementación de [TransactionRepository] mediante SQLDelight:
- * 1. SSOT: La UI observa exclusivamente estados reactivos (StateFlow).
- * 2. Mapeo: Aísla el modelo de persistencia (SQL) del modelo de vista (UI).
- * 3. Reactividad: `WhileSubscribed(5000)` evita consultas redundantes ante
- * cambios de configuración (rotación/pausa).
+ * 1. Mapeo: Extrae los datos de SQLite y los convierte ESTRICTAMENTE a
+ * entidades de Dominio puro, aislando la BD de la Interfaz de Usuario.
  * ========================================================================= */
 class SqlDelightTransactionRepository(
     database: BovedaDatabase,
@@ -33,33 +30,23 @@ class SqlDelightTransactionRepository(
 
     private val queries = database.transactionEntityQueries
 
-    // --- 1. LECTURA Y MAPEO DE CAPAS ---
-    override val transactions: StateFlow<List<TransactionUiModel>> = queries.selectAllTransactions()
+    // --- 1. LECTURA Y MAPEO DE CAPAS (ENTITY -> DOMAIN) ---
+    override val transactions: StateFlow<List<Transaction>> = queries.selectAllTransactions()
         .asFlow()
-        // NOTA: La operación `mapToList` debe ejecutarse en `Dispatchers.IO` para
-        // evitar el bloqueo del hilo principal (UI Thread), garantizando la
-        // fluidez de los 120 Hz durante consultas pesadas a la base de datos.
         .mapToList(Dispatchers.IO)
         .map { entityList ->
             entityList.map { entity ->
-                TransactionUiModel(
+                Transaction(
                     id = entity.id,
-                    title = entity.title,
                     amount = -entity.amount,
-                    status = if (entity.status == TxUiStatus.PENDING.name) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
-                    date = "Hoy",
-                    time = "00:00",
-                    method = "Saldo Bóveda",
-                    recipient = "Transferencia Local",
-                    reference = "REF-${entity.id.take(6)}",
-                    timeline = emptyList()
+                    receiverName = entity.title,
+                    receiverAccount = "Cuenta Local",
+                    status = if (entity.status == TransactionStatus.PENDING.name) TransactionStatus.PENDING else TransactionStatus.COMPLETED,
+                    timestamp = entity.timestamp
                 )
             }
         }.stateIn(
             scope = scope,
-            // NOTA: Se emplea WhileSubscribed(5000) para evitar la reinicialización
-            // del flujo y consultas redundantes a la BD durante cambios de configuración
-            // del dispositivo (ej. rotación).
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
@@ -75,8 +62,8 @@ class SqlDelightTransactionRepository(
         initialValue = 1500.00
     )
 
-    // --- ESCRITURA (IDEMPOTENCIA Y ESCUDO ANTI-CRASH) ---
-    override fun saveTransaction(transaction: TransactionUiModel) {
+    // --- ESCRITURA (DOMAIN -> ENTITY) ---
+    override fun saveTransaction(transaction: Transaction) {
         scope.launch(Dispatchers.IO) {
             try {
                 val currentTimestamp = getCurrentTimeMillis()
@@ -84,18 +71,18 @@ class SqlDelightTransactionRepository(
 
                 queries.insertTransaction(
                     id = uniqueId,
-                    title = transaction.title,
+                    title = transaction.receiverName,
                     amount = kotlin.math.abs(transaction.amount),
-                    status = TxUiStatus.PENDING.name,
+                    status = transaction.status.name,
                     timestamp = currentTimestamp
                 )
                 BovedaSyncWorker().enqueueSync()
             } catch (e: Exception) {
-                // SI ALGO FALLA (ej. ID duplicado), SE ATRAPA AQUÍ Y LA APP NO SE CIERRA
                 println("⚠️ Error SQL / Idempotencia: ${e.message}")
             }
         }
     }
+
     override fun updateTransactionStatus(id: String, status: TransactionStatus) {
         scope.launch(Dispatchers.IO) {
             queries.updateTransactionStatus(status.name, id)

@@ -20,7 +20,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.presentation.components.TransactionRow
+import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 
@@ -48,9 +50,27 @@ object ActivityTab : Tab {
         val filters = listOf("Todos", "Entradas", "Salidas", "Pendientes")
 
         val repository = com.jastin.boveda.globalTransactionRepository
-        val transactionsState = repository.transactions.collectAsState()
-        val allTransactions = transactionsState.value
+        val domainTransactions = repository.transactions.collectAsState().value
 
+        // EL PUENTE (MAPPER DOMAIN -> UI)
+        // Transformamos las entidades puras antes de que lleguen a la lógica de filtrado visual.
+        val allTransactions = domainTransactions.map { tx ->
+            TransactionUiModel(
+                id = tx.id,
+                title = tx.receiverName,
+                amount = tx.amount,
+                status = if (tx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
+                date = "Hoy",
+                time = "00:00",
+                method = "Saldo Bóveda",
+                recipient = tx.receiverName,
+                reference = "REF-${tx.id.take(6)}",
+                timeline = emptyList()
+            )
+        }
+
+        // Al usar allTransactions (que ahora es List<TransactionUiModel>),
+        // tu lógica original de filtrado por TxUiStatus vuelve a funcionar perfectamente.
         val filteredTransactions = remember(selectedFilter, allTransactions) {
             when (selectedFilter) {
                 "Entradas" -> allTransactions.filter { it.amount > 0 && it.status == TxUiStatus.COMPLETED }

@@ -1,7 +1,7 @@
 package com.jastin.boveda.domain.repository
 
+import com.jastin.boveda.domain.model.Transaction
 import com.jastin.boveda.domain.model.TransactionStatus
-import com.jastin.boveda.presentation.model.TransactionUiModel
 import kotlinx.coroutines.flow.StateFlow
 
 /* =========================================================================
@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 interface TransactionRepository {
 
     // --- 1. LECTURAS REACTIVAS (Single Source of Truth) ---
-    val transactions: StateFlow<List<TransactionUiModel>>
+    val transactions: StateFlow<List<Transaction>>
     val currentBalance: StateFlow<Double>
 
     // --- 2. MUTACIONES LOCALES ---
-    fun saveTransaction(transaction: TransactionUiModel)
+    fun saveTransaction(transaction: Transaction)
 
     // --- 3. MUTACIONES DE SINCRONIZACIÓN ---
     fun updateTransactionStatus(id: String, status: TransactionStatus)

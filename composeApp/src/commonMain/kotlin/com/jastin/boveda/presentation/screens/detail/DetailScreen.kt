@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.presentation.components.BovedaCard
+import com.jastin.boveda.presentation.model.TimelineEventUi
+import com.jastin.boveda.presentation.model.TransactionUiModel
 import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.formatMoney
@@ -41,14 +44,38 @@ data class DetailScreen(val transactionId: String) : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val transactions by com.jastin.boveda.globalTransactionRepository.transactions.collectAsState()
-        val liveTransaction = transactions.find { it.id == transactionId }
 
-        if (liveTransaction == null) {
+        // 1. Obtenemos la entidad pura de Dominio
+        val domainTx = transactions.find { it.id == transactionId }
+
+        if (domainTx == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Emerald500)
             }
             return
         }
+
+        // 2. EL PUENTE (MAPPER DOMAIN -> UI)
+        // Transformamos los datos crudos en la estructura que exige la UI
+        val liveTransaction = TransactionUiModel(
+            id = domainTx.id,
+            title = domainTx.receiverName,
+            amount = domainTx.amount,
+            status = if (domainTx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
+            date = "Hoy",
+            time = "00:00",
+            method = "Saldo Bóveda",
+            recipient = domainTx.receiverName,
+            reference = "REF-${domainTx.id.take(6)}",
+            timeline = listOf(
+                TimelineEventUi("Iniciada", "Ahora", true),
+                TimelineEventUi(
+                    status = if (domainTx.status == TransactionStatus.PENDING) "Procesando en red..." else "Confirmada",
+                    time = if (domainTx.status == TransactionStatus.PENDING) "--:--" else "Ahora",
+                    done = domainTx.status == TransactionStatus.COMPLETED
+                )
+            )
+        )
 
         Scaffold(
             topBar = {

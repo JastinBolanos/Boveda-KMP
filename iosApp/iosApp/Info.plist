@@ -8,6 +8,11 @@
     <key>CFBundleName</key>
     <string>BovedaKMP</string>
 
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
 
@@ -21,6 +26,11 @@
     <array>
         <string>fetch</string>
         <string>processing</string>
+    </array>
+
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.jastin.boveda</string>
     </array>
 </dict>
 </plist>
