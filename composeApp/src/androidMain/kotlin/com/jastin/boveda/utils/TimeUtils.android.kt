@@ -6,18 +6,16 @@ import java.util.Locale
 
 /* =========================================================================
  * PROVEEDOR DE TIEMPO (ANDROID / JVM)
- * Implementa la captura de tiempo nativa para la plataforma Android:
- * * Abstracción (Expect/Actual): Evita colisiones de nombres de librerías
- * y reduce la huella del binario.
- * * Optimización: Accede directamente al reloj del sistema, garantizando
- * latencia mínima y eliminando dependencias externas innecesarias.
+ * Implementa la captura de tiempo nativa para la plataforma Android.
  * ========================================================================= */
 actual fun getCurrentTimeMillis(): Long {
     return System.currentTimeMillis()
 }
 
 actual fun getCurrentTimeFormatted(): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+    // SEGURO: Usamos Locale.US para garantizar que los números siempre
+    // sean arábigos occidentales (0-9), sin importar el idioma del dispositivo.
+    val formatter = SimpleDateFormat("HH:mm", Locale.US)
     return formatter.format(Date())
 }
 

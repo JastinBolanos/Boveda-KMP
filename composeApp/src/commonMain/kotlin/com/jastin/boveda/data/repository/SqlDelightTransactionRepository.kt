@@ -45,7 +45,7 @@ class SqlDelightTransactionRepository(
                 TransactionUiModel(
                     id = entity.id,
                     title = entity.title,
-                    amount = entity.amount,
+                    amount = -entity.amount,
                     status = if (entity.status == TxUiStatus.PENDING.name) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
                     date = "Hoy",
                     time = "00:00",
@@ -75,20 +75,25 @@ class SqlDelightTransactionRepository(
         initialValue = 1500.00
     )
 
-    // --- ESCRITURA (IDEMPOTENCIA Y ENCOLAMIENTO) ---
+    // --- ESCRITURA (IDEMPOTENCIA Y ESCUDO ANTI-CRASH) ---
     override fun saveTransaction(transaction: TransactionUiModel) {
         scope.launch(Dispatchers.IO) {
-            val currentTimestamp = getCurrentTimeMillis()
-            val uniqueId = transaction.id.ifBlank { currentTimestamp.toString() }
+            try {
+                val currentTimestamp = getCurrentTimeMillis()
+                val uniqueId = transaction.id.ifBlank { currentTimestamp.toString() }
 
-            queries.insertTransaction(
-                id = uniqueId,
-                title = transaction.title,
-                amount = transaction.amount,
-                status = TxUiStatus.PENDING.name,
-                timestamp = currentTimestamp
-            )
-            BovedaSyncWorker().enqueueSync()
+                queries.insertTransaction(
+                    id = uniqueId,
+                    title = transaction.title,
+                    amount = kotlin.math.abs(transaction.amount),
+                    status = TxUiStatus.PENDING.name,
+                    timestamp = currentTimestamp
+                )
+                BovedaSyncWorker().enqueueSync()
+            } catch (e: Exception) {
+                // SI ALGO FALLA (ej. ID duplicado), SE ATRAPA AQUÍ Y LA APP NO SE CIERRA
+                println("⚠️ Error SQL / Idempotencia: ${e.message}")
+            }
         }
     }
     override fun updateTransactionStatus(id: String, status: TransactionStatus) {

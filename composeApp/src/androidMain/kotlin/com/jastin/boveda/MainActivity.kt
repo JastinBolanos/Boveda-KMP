@@ -24,7 +24,9 @@ class MainActivity : ComponentActivity() {
         AndroidPlatformContext.applicationContext = this.applicationContext
 
         setContent {
-            App(driverFactory = DatabaseDriverFactory(this))
+            // ✅ BLINDAJE DE MEMORIA: Pasamos applicationContext en lugar de 'this'
+            // Esto asegura que SQLDelight no retenga la Activity si el usuario rota la pantalla.
+            App(driverFactory = DatabaseDriverFactory(this.applicationContext))
         }
     }
 }

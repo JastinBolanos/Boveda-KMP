@@ -89,7 +89,6 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                     TimelineEventUi("Procesando en red", "--:--", false)
                 )
             )
-
             repository.saveTransaction(newTx)
 
             try {

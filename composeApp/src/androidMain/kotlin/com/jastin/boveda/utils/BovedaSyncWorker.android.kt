@@ -7,18 +7,24 @@ import com.jastin.boveda.domain.usecase.SyncPendingTransactionsUseCase
 import com.jastin.boveda.globalTransactionRepository
 
 /* =========================================================================
- * 1. CLASE NATIVA DE ANDROID (WORKMANAGER)
+ * 1. CLASE NATIVA DE ANDROID (WORKMANAGER)---
  * ========================================================================= */
 class SyncAndroidWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
+    // BLINDAJE: Retry automático para no perder datos si no hay red.
     override suspend fun doWork(): Result {
-        println("⚙️ WorkManager: Despertando para sincronizar...")
-        val useCase = SyncPendingTransactionsUseCase(globalTransactionRepository, NetworkClient())
-        useCase()
-        return Result.success()
+        return try {
+            println("⚙️ WorkManager: Despertando para sincronizar...")
+            val useCase = SyncPendingTransactionsUseCase(globalTransactionRepository, NetworkClient())
+            useCase()
+            Result.success()
+        } catch (e: Exception) {
+            println("⚠️ WorkManager: Error de red. Encolando reintento... Error: ${e.message}")
+            Result.retry()
+        }
     }
 }
 

@@ -18,5 +18,8 @@ fun formatMoney(amount: Double): String {
     val decimalPart = if (parts.size > 1) parts[1].padEnd(2, '0') else "00"
 
     val sign = if (isNegative) "-" else ""
-    return "S/ $sign$integerPart.$decimalPart"
+
+    // BLINDAJE VISUAL: Colocamos el signo antes del símbolo de la moneda
+    // Si hay un espacio extra por el signo, usamos trim() para limpiarlo si es positivo.
+    return ("$sign S/ $integerPart.$decimalPart").trim()
 }

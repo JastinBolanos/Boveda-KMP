@@ -12,8 +12,8 @@
 CREATE TABLE TransactionEntity (
     id TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    amount REAL NOT NULL,
-    status TEXT NOT NULL,
+    amount REAL NOT NULL CHECK (amount >= 0.0),
+    status TEXT NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED')),
     timestamp INTEGER NOT NULL
 );
 
@@ -33,9 +33,9 @@ INSERT INTO TransactionEntity(id, title, amount, status, timestamp)
 VALUES (?, ?, ?, ?, ?);
 
 -- Operación crítica para la sincronización offline.
--- Permite que el Background Worker realice el cambio de estado de 'PENDING'
--- a 'COMPLETED' de forma atómica cuando se recupere la conectividad.
+-- Permite que el Background Worker realice el cambio de estado de forma atómica.
+-- SEGURIDAD: Solo se permite actualizar si el estado actual es PENDING (Idempotencia).
 updateTransactionStatus:
 UPDATE TransactionEntity
 SET status = ?
-WHERE id = ?;
+WHERE id = ? AND status = 'PENDING';
