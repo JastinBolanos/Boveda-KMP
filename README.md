@@ -98,7 +98,7 @@ cd BovedaKMP
 ---
 
 ## ⚖️ Licencia y Derechos de Uso
-⚠️ AVISO LEGAL CRÍTICO: Este repositorio es un proyecto de demostración técnica diseñado exclusivamente para fines educativos, de estudio y análisis arquitectónico.
+AVISO LEGAL CRÍTICO: Este repositorio es un proyecto de demostración técnica diseñado exclusivamente para fines educativos, de estudio y análisis arquitectónico.
 
 Código Fuente (Software): Licenciado bajo MIT + Commons Clause v1.0. Queda ESTRICTAMENTE PROHIBIDO su uso en entornos de producción, su monetización, el manejo de datos/dinero real y la publicación de obras derivadas que constituyan plagio o modificaciones triviales (Regla del 30%). (Consulte el archivo LICENSE para conocer los términos completos).
 
