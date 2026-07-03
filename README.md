@@ -2,7 +2,7 @@
   <img src="docs/assets/logo_bovedakmp.png" width="120" alt="Bóveda Logo">
 </p>
 
-<h1 align="center">🏦 Bóveda KMP | Enterprise-Grade Fintech Architecture</h1>
+<h1 align="center"> Bóveda KMP | Enterprise-Grade Fintech Architecture</h1>
 
 > **Arquitectura Fintech Multiplataforma de Alta Seguridad, Disponibilidad Offline y Reactividad Unidireccional.**
 
@@ -10,7 +10,7 @@ Bóveda KMP no es solo una interfaz bancaria. Es una demostración arquitectóni
 
 ---
 
-## 📱 Experiencia de Usuario (UI/UX)
+## Experiencia de Usuario (UI/UX)
 Diseño orientado a la fluidez transaccional, integrando micro-interacciones de estado, componentes multiplataforma y soporte nativo para esquemas Dark/Light Mode.
 
 <p align="center">
@@ -31,7 +31,7 @@ Diseño orientado a la fluidez transaccional, integrando micro-interacciones de 
 
 ---
 
-## ✅ Características
+## Características
 * 🔹 **100% Offline First** — Funciona sin internet, sincroniza automáticamente al volver la señal.
 * 🔹 **Idempotencia garantizada** — Diseñado para que sea IMPOSIBLE duplicar transacciones.
 * 🔹 **Estado unidireccional** — La UI solo reacciona a cambios de la base de datos local.
@@ -40,7 +40,7 @@ Diseño orientado a la fluidez transaccional, integrando micro-interacciones de 
 
 ---
 
-## 🔐 Pilares Arquitectónicos (Tech Lead Standard)
+## Pilares Arquitectónicos (Tech Lead Standard)
 
 * **Offline-First (Single Source of Truth):** La aplicación no depende de la red para funcionar. La base de datos local (`SQLDelight`) es la única fuente de la verdad. La capa de presentación reacciona *exclusivamente* a las mutaciones de la base de datos a través de `StateFlow`, nunca a estados temporales de red.
 * **Idempotencia Transaccional:** Prevención matemática del "doble cobro". Cada intención de transacción genera un `UUID` único localmente. Si la red fluctúa y una petición se dispara múltiples veces, el control de idempotencia (basado en el UUID) asegura que los fondos se muevan una sola vez.
@@ -49,7 +49,7 @@ Diseño orientado a la fluidez transaccional, integrando micro-interacciones de 
 
 ---
 
-## 🏗 Orquestación de Datos y Sincronización
+## Orquestación de Datos y Sincronización
 
 El siguiente flujo demuestra la robustez del sistema frente a fallos de red. El usuario nunca queda bloqueado esperando un *spinner* de carga; la aplicación registra la intención y asume el control en segundo plano.
 
@@ -75,7 +75,7 @@ sequenceDiagram
 ```
 ---
 
-## 🛠 Stack Tecnológico
+## Stack Tecnológico
 
 * **Core & UI:** Kotlin Multiplatform (KMP), Compose Multiplatform
 * **Arquitectura:** Clean Architecture + MVI (Model-View-Intent)
@@ -86,7 +86,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 Instalación y Ejecución
+## Instalación y Ejecución
 El proyecto incluye un Wrapper de Gradle, eliminando la necesidad de configuraciones complejas. **Clonar, sincronizar y correr.**
 
 ```bash
