@@ -22,7 +22,7 @@ jobs:
         distribution: 'zulu'
 
     - name: Configurar Gradle
-      uses: gradle/actions/setup-gradle@v3
+      uses: gradle/actions/setup-gradle@v6
 
     - name: Dar permisos de ejecución a Gradle
       run: chmod +x gradlew
