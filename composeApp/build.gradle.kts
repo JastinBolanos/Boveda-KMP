@@ -52,8 +52,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
-            implementation("cafe.adriel.voyager:voyager-screenmodel:1.0.0")
-            implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.0")
+            implementation("cafe.adriel.voyager:voyager-screenmodel:2.2.21-1.10.3")
+            implementation("cafe.adriel.voyager:voyager-tab-navigator:2.2.21-1.10.3")
 
             // --- TUS ARMAS NIVEL SENIOR (COMPARTIDAS PARA AMBAS PLATAFORMAS) ---
 
