@@ -19,6 +19,13 @@ Bóveda KMP is more than just a banking interface. It is an enterprise-grade arc
 ## User Experience (UI/UX)
 A design focused on transactional fluidity, integrating state-based micro-interactions, cross-platform components, and native support for Dark and Light modes.
 
+### <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHp0bDAxNXk1bG56OHp6MHU5NWp3aG95Zm9ndzNjNmh2amxpNTZmNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F0VCptrJteVWDeLBHD/giphy.gif" width="70" align="absmiddle" /> Live Demo: Offline-First in Action
+> ** Notice the Status Bar:** Pay close attention to the Wi-Fi icon at the very top of the screen. This video demonstrates how the application gracefully handles connectivity drops by securely queuing the transaction locally (**Pending** state), and automatically synchronizing it (**Success** state) the exact second the network is restored.
+
+https://github.com/user-attachments/assets/319ecfea-90b9-4313-819b-5b7c494f4ac0
+
+<br>
+
 <p align="center">
   <img src="docs/assets/home_dark.png" width="250" alt="Pantalla de Inicio Oscura">
   &nbsp;&nbsp;
