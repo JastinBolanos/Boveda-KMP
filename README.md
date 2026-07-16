@@ -8,6 +8,12 @@
 
 Bóveda KMP is more than just a banking interface. It is an enterprise-grade architectural demonstration (Android & iOS) built on rigorous engineering principles to ensure that **financial transactions remain immutable and funds are never duplicated**, even when operating with intermittent or no connectivity.
 
+<p align="center">
+  <a href="https://github.com/JastinBolanos/Boveda-KMP/releases/download/v1.0.0/BovedaKMP.apk">
+    <img src="https://img.shields.io/badge/Descargar-APK%20Android-green?style=for-the-badge&logo=android&logoColor=white" alt="Descargar APK">
+  </a>
+</p>
+
 ---
 
 ## User Experience (UI/UX)
