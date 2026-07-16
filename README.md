@@ -20,23 +20,23 @@ Bóveda KMP is more than just a banking interface. It is an enterprise-grade arc
 A design focused on transactional fluidity, integrating state-based micro-interactions, cross-platform components, and native support for Dark and Light modes.
 
 <p align="center">
-  <img src="docs/assets/home_dark.jpg" width="250" alt="Pantalla de Inicio Oscura">
+  <img src="docs/assets/home_dark.png" width="250" alt="Pantalla de Inicio Oscura">
   &nbsp;&nbsp;
-  <img src="docs/assets/transfer_dark.jpg" width="250" alt="Teclado de Transferencia">
+  <img src="docs/assets/transfer_dark.png" width="250" alt="Teclado de Transferencia">
   &nbsp;&nbsp;
-  <img src="docs/assets/receipt_success.jpg" width="250" alt="Recibo Exitoso">
+  <img src="docs/assets/receipt_success.png" width="250" alt="Recibo Exitoso">
 </p>
 
 <p align="center">
-  <img src="docs/assets/menu_dark.jpg" width="250" alt="Menú Lateral Oscuro">
+  <img src="docs/assets/menu_dark.png" width="250" alt="Menú Lateral Oscuro">
   &nbsp;&nbsp;
-  <img src="docs/assets/activity_dark.jpg" width="250" alt="Historial de Actividad">
+  <img src="docs/assets/activity_dark.png" width="250" alt="Historial de Actividad">
   &nbsp;&nbsp;
-  <img src="docs/assets/receipt_pending.jpg" width="250" alt="Recibo Pendiente Offline">
+  <img src="docs/assets/receipt_pending.png" width="250" alt="Recibo Pendiente Offline">
 </p>
 
 <p align="center">
-  <img src="docs/assets/home_light.jpg" width="250" alt="Pantalla de Inicio Clara">
+  <img src="docs/assets/home_light.png" width="250" alt="Pantalla de Inicio Clara">
 </p>
 
 ---
