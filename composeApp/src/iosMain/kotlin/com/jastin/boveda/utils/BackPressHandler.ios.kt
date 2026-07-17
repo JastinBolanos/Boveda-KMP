@@ -3,12 +3,12 @@ package com.jastin.boveda.utils
 import androidx.compose.runtime.Composable
 
 /* =========================================================================
- * INTERCEPTOR DE RETROCESO (IOS ACTUAL)
- * Implementación de la plataforma iOS para el manejo del gesto "Swipe-to-back".
+ * BACK INTERCEPTOR (IOS ACTUAL)
+ * iOS platform implementation for handling the "Swipe-to-back" gesture.
  * ========================================================================= */
 
-// --- 1. GESTIÓN NATIVA DE GESTOS ---
+// --- 1. NATIVE GESTURE MANAGEMENT ---
 @Composable
 actual fun BackPressHandler(enabled: Boolean, onBack: () -> Unit) {
-    // No-Op. La navegación nativa de iOS maneja los gestos de retroceso.
+    // No-Op. iOS native navigation handles back gestures.
 }

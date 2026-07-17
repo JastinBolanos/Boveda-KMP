@@ -7,36 +7,36 @@ import com.jastin.boveda.domain.usecase.SyncPendingTransactionsUseCase
 import com.jastin.boveda.globalTransactionRepository
 
 /* =========================================================================
- * 1. CLASE NATIVA DE ANDROID (WORKMANAGER)---
+ * 1. NATIVE ANDROID CLASS (WORKMANAGER) ---
  * ========================================================================= */
 class SyncAndroidWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
-    // BLINDAJE: Retry automático para no perder datos si no hay red.
+    // SHIELD: Automatic retry to avoid data loss if there is no network.
     override suspend fun doWork(): Result {
         return try {
-            println("⚙️ WorkManager: Despertando para sincronizar...")
+            println("⚙️ WorkManager: Waking up to sync...")
             val useCase = SyncPendingTransactionsUseCase(globalTransactionRepository, NetworkClient())
             useCase()
             Result.success()
         } catch (e: Exception) {
-            println("⚠️ WorkManager: Error de red. Encolando reintento... Error: ${e.message}")
+            println("⚠️ WorkManager: Network error. Enqueueing retry... Error: ${e.message}")
             Result.retry()
         }
     }
 }
 
 /* =========================================================================
- * 2. REGISTRO DE CONTEXTO GLOBAL (Service Locator ligero)
+ * 2. GLOBAL CONTEXT REGISTRY (Lightweight Service Locator)
  * ========================================================================= */
 object AndroidPlatformContext {
     lateinit var applicationContext: Context
 }
 
 /* =========================================================================
- * 3. IMPLEMENTACIÓN DEL CONTRATO KMP ('actual')
+ * 3. KMP CONTRACT IMPLEMENTATION ('actual')
  * ========================================================================= */
 actual class BovedaSyncWorker actual constructor() {
 
@@ -53,6 +53,6 @@ actual class BovedaSyncWorker actual constructor() {
             .build()
 
         WorkManager.getInstance(AndroidPlatformContext.applicationContext).enqueue(workRequest)
-        println("📦 WorkManager: Trabajo de sincronización encolado.")
+        println("📦 WorkManager: Synchronization work enqueued.")
     }
 }

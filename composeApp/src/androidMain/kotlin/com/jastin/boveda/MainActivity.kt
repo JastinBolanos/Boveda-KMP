@@ -10,12 +10,12 @@ import com.jastin.boveda.database.DatabaseDriverFactory
 import com.jastin.boveda.utils.AndroidPlatformContext
 
 /* =========================================================================
- * HOST NATIVO DE LA APLICACIÓN (ANDROID)
- * Punto de entrada base para el sistema de interfaz compartida (Compose MP):
- * * Frontera del Sistema: Límite arquitectónico donde reside la interacción
- * directa con el SO.
- * * Inyección de Dependencias: Captura y provee él [Context] al dominio
- * agnóstico, facilitando la inicialización de la persistencia (SQL).
+ * NATIVE APPLICATION HOST (ANDROID)
+ * Base entry point for the shared interface system (Compose MP):
+ * * System Boundary: Architectural limit where direct interaction
+ * with the OS resides.
+ * * Dependency Injection: Captures and provides the [Context] to the agnostic
+ * domain, facilitating the initialization of persistence (SQL).
  * ========================================================================= */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,22 +24,22 @@ class MainActivity : ComponentActivity() {
         AndroidPlatformContext.applicationContext = this.applicationContext
 
         setContent {
-            // ✅ BLINDAJE DE MEMORIA: Pasamos applicationContext en lugar de 'this'
-            // Esto asegura que SQLDelight no retenga la Activity si el usuario rota la pantalla.
+            // ✅ MEMORY SHIELD: We pass applicationContext instead of 'this'
+            // This ensures that SQLDelight doesn't retain the Activity if the user rotates the screen.
             App(driverFactory = DatabaseDriverFactory(this.applicationContext))
         }
     }
 }
 
 /* =========================================================================
- * NOTA ARQUITECTÓNICA: LIMITACIONES DE PREVIEW
+ * ARCHITECTURAL NOTE: PREVIEW LIMITATIONS
  * =========================================================================
- * La vista previa de la raíz está deshabilitada: el motor de Compose opera
- * en un entorno estático (Mock) sin acceso al Context o al sistema de archivos.
- * * * Implicación: Intentar instanciar la jerarquía completa dispara errores
- * de acceso a SQLite.
- * * Estrategia: Las pruebas visuales deben limitarse a componentes
- * presentacionales (Dumb) aislados de dependencias de persistencia.
+ * The root preview is disabled: the Compose engine operates
+ * in a static environment (Mock) without access to Context or the file system.
+ * * * Implication: Attempting to instantiate the full hierarchy triggers
+ * SQLite access errors.
+ * * Strategy: Visual tests should be limited to presentational
+ * components (Dumb) isolated from persistence dependencies.
  */
 @Preview
 @Composable

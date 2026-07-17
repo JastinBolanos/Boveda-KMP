@@ -6,17 +6,17 @@ import kotlinx.coroutines.flow.StateFlow
 
 /* =========================================================================
  * PORT: TransactionRepository
- * Contrato de persistencia (DIP). Aísla el dominio de bases de datos o red.
+ * Persistence contract (DIP). Isolates the domain from databases or network.
  * ========================================================================= */
 interface TransactionRepository {
 
-    // --- 1. LECTURAS REACTIVAS (Single Source of Truth) ---
+    // --- 1. REACTIVE READS (Single Source of Truth) ---
     val transactions: StateFlow<List<Transaction>>
     val currentBalance: StateFlow<Double>
 
-    // --- 2. MUTACIONES LOCALES ---
+    // --- 2. LOCAL MUTATIONS ---
     fun saveTransaction(transaction: Transaction)
 
-    // --- 3. MUTACIONES DE SINCRONIZACIÓN ---
+    // --- 3. SYNCHRONIZATION MUTATIONS ---
     fun updateTransactionStatus(id: String, status: TransactionStatus)
 }

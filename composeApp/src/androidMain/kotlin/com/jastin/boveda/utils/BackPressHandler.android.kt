@@ -4,12 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 
 /* =========================================================================
- * INTERCEPTOR DE NAVEGACIÓN (ANDROID)
- * Implementa la lógica nativa para el manejo del botón "Atrás" (gestos/físico):
- * * Abstracción KMP: Desacopla la lógica de navegación compartida de las
- * APIs específicas de Android.
- * * Control de Estado: Permite gestionar el cierre de modales y menús desde
- * commonMain sin dependencias directas de librerías de terceros.
+ * NAVIGATION INTERCEPTOR (ANDROID)
+ * Implements native logic for handling the "Back" button (gestures/physical):
+ * * KMP Abstraction: Decouples shared navigation logic from Android-specific APIs.
+ * * State Control: Allows managing the closing of modals and menus from
+ * commonMain without direct dependencies on third-party libraries.
  * ========================================================================= */
 @Composable
 actual fun BackPressHandler(enabled: Boolean, onBack: () -> Unit) {

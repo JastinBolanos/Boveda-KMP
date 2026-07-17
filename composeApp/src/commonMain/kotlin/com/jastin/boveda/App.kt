@@ -20,13 +20,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 /* =========================================================================
  * COMPOSITION ROOT
- * Inicializa dependencias (DI manual), tema global y navegación (Voyager).
+ * Initializes dependencies (manual DI), global theme, and navigation (Voyager).
  * ========================================================================= */
 
 // --- 1. SERVICE LOCATOR ---
-// NOTA: Se emplea `lateinit` como solución temporal para inyección de
-// dependencias manual. Debe inicializarse estrictamente antes del primer
-// ciclo de renderizado de la aplicación.
+// NOTE: `lateinit` is used as a temporary solution for manual dependency
+// injection. It must be initialized strictly before the application's
+// first render cycle.
 
 lateinit var globalTransactionRepository: TransactionRepository
 lateinit var globalSettingsRepository: SettingsRepository
@@ -36,14 +36,14 @@ val globalIsDarkMode = MutableStateFlow(false)
 @Composable
 fun App(driverFactory: DatabaseDriverFactory) {
 
-    // --- 2. BOOTSTRAP DE BASE DE DATOS SEGURIZADO ---
-    // Usamos remember para garantizar Thread-Safety durante recomposiciones de UI
+    // --- 2. SECURED DATABASE BOOTSTRAP ---
+    // We use remember to ensure thread safety during UI recompositions.
     remember {
         if (!::globalTransactionRepository.isInitialized) {
             val driver = driverFactory.createDriver()
             val database = BovedaDatabase(driver)
 
-            // SupervisorJob asegura que un fallo en BD no mate el scope permanentemente
+            // SupervisorJob ensures that a database failure does not permanently kill the scope.
             val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
             globalTransactionRepository = SqlDelightTransactionRepository(

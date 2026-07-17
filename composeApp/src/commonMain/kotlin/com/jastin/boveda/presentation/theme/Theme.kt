@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /* =========================================================================
- * MATERIAL THEME WRAPPER (SISTEMA GLOBAL DE DISEÑO)
- * Mapea nuestros tokens de color a roles semánticos de Material3,
- * permitiendo que los componentes estándar adopten nuestra identidad
- * visual de marca automáticamente.
+* MATERIAL THEME WRAPPER (GLOBAL DESIGN SYSTEM)
+ * Maps our color tokens to Material3 semantic roles,
+ * allowing standard components to automatically adopt our
+ * visual brand identity.
  * ========================================================================= */
 private val LightColorScheme = lightColorScheme(
     primary = Emerald500,

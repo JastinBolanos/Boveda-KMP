@@ -3,9 +3,9 @@ package com.jastin.boveda.utils
 import com.jastin.boveda.domain.usecase.SyncPendingTransactionsUseCase
 
 /* =========================================================================
- * CONTRATO DE WORKER DE SINCRONIZACIÓN (EXPECT)
- * Abstracción para tareas de fondo. Permite disparar la sincronización
- * persistente delegando la gestión del ciclo de vida al sistema nativo.
+ * SYNCHRONIZATION WORKER CONTRACT (EXPECT)
+ * Abstraction for background tasks. Allows triggering persistent
+ * synchronization by delegating lifecycle management to the native system.
  * ========================================================================= */
 expect class BovedaSyncWorker() {
     val syncUseCase: SyncPendingTransactionsUseCase

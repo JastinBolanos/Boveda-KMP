@@ -4,9 +4,9 @@ import kotlin.math.abs
 import kotlin.math.round
 
 /* =========================================================================
- * UTILIDAD DE FORMATEO FINANCIERO (PURE FUNCTION)
- * Centraliza la lógica de presentación de divisas. Al ser una función pura,
- * garantiza que las vistas (UI) permanezcan agnósticas a la lógica de strings.
+ * FINANCIAL FORMATTING UTILITY (PURE FUNCTION)
+ * Centralizes currency presentation logic. Being a pure function,
+ * it ensures that views (UI) remain agnostic to string logic.
  * ========================================================================= */
 fun formatMoney(amount: Double): String {
     val isNegative = amount < 0
@@ -21,5 +21,5 @@ fun formatMoney(amount: Double): String {
 
     // BLINDAJE VISUAL: Colocamos el signo antes del símbolo de la moneda
     // Si hay un espacio extra por el signo, usamos trim() para limpiarlo si es positivo.
-    return ("$sign S/ $integerPart.$decimalPart").trim()
+    return ("$sign $ $integerPart.$decimalPart").trim()
 }

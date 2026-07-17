@@ -5,8 +5,8 @@ import com.jastin.boveda.domain.model.TransactionStatus
 import com.jastin.boveda.domain.repository.TransactionRepository
 
 /* =========================================================================
- * CASO DE USO: SINCRONIZACIÓN OFFLINE
- * Orquesta la recuperación de pagos locales y su envío al servidor.
+ * USE CASE: OFFLINE SYNCHRONIZATION
+ * Orchestrates the retrieval of local payments and their transmission to the server.
  * ========================================================================= */
 
 class SyncPendingTransactionsUseCase(
@@ -14,7 +14,7 @@ class SyncPendingTransactionsUseCase(
     private val networkClient: NetworkClient
 ) {
 
-    // --- 1. MOTOR DE PROCESAMIENTO ---
+    // --- 1. PROCESSING ENGINE ---
     suspend operator fun invoke() {
         val allTransactions = repository.transactions.value
 
@@ -30,7 +30,7 @@ class SyncPendingTransactionsUseCase(
                     repository.updateTransactionStatus(tx.id, TransactionStatus.COMPLETED)
                 }
             } catch (e: Exception) {
-                println("Worker Error: Fallo al sincronizar tx ${tx.id} -> ${e.message}")
+                println("Worker Error: Failed to sync tx ${tx.id} -> ${e.message}")
             }
         }
     }

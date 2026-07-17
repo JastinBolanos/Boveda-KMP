@@ -1,9 +1,9 @@
 package com.jastin.boveda.utils
 
 /* =========================================================================
- * CONTRATO DE TIEMPO (EXPECT)
- * Abstracción para captura de timestamps. Delegación nativa al motor
- * del hardware para minimizar el peso del binario y evitar dependencias.
+* TIME CONTRACT (EXPECT)
+ * Abstraction for timestamp capture. Native delegation to the hardware
+ * engine to minimize binary size and avoid dependencies.
  * ========================================================================= */
 expect fun getCurrentTimeMillis(): Long
 expect fun getCurrentTimeFormatted(): String

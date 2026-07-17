@@ -24,13 +24,13 @@ import com.jastin.boveda.utils.formatMoney
 /* =========================================================================
  * DESIGN SYSTEM (STATELESS COMPONENTS)
  * =========================================================================
- * Componentes de presentación (Dumb).
- * * State Hoisting: Inyectan estado y eventos mediante parámetros.
- * * Desacoplamiento: Consumen únicamente [TransactionUiModel], delegando
- *   toda lógica de negocio a capas superiores.
+ * Presentation components (Dumb).
+ * * State Hoisting: Inject state and events via parameters.
+ * * Decoupling: Consume only [TransactionUiModel], delegating
+ *   all business logic to upper layers.
  */
 
-// --- 1. BOTONES Y ACCIONES ---
+// --- 1. BUTTONS AND ACTIONS ---
 @Composable
 fun BovedaButton(
     text: String,
@@ -55,7 +55,7 @@ fun BovedaButton(
     }
 }
 
-// --- 2. CONTENEDORES (SURFACES) ---
+// --- 2. CONTAINERS (SURFACES) ---
 @Composable
 fun BovedaCard(
     modifier: Modifier = Modifier,
@@ -70,7 +70,7 @@ fun BovedaCard(
     )
 }
 
-// --- 3. LISTAS Y FILAS DE DATOS ---
+// --- 3. LISTS AND DATA ROWS ---
 @Composable
 fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
     Row(
@@ -109,7 +109,7 @@ fun TransactionRow(tx: TransactionUiModel, onClick: () -> Unit) {
                 color = if (isPositive) Emerald500 else MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = if (tx.status == TxUiStatus.PENDING) "Encolado" else "Exitoso",
+                text = if (tx.status == TxUiStatus.PENDING) "Pending" else "Successful",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = if (tx.status == TxUiStatus.PENDING) Amber500 else Slate400

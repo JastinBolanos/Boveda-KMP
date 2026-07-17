@@ -3,10 +3,10 @@ package com.jastin.boveda.presentation.theme
 import androidx.compose.ui.graphics.Color
 
 /* =========================================================================
- * DESIGN SYSTEM: TOKENS DE COLOR (PALETA BASE)
- * Define la paleta cromática (estilo Tailwind) con roles semánticos estrictos.
- * Prohíbe el uso de valores hexadecimales hardcodeados, garantizando
- * consistencia de marca, escalabilidad y soporte para Dark Mode.
+* DESIGN SYSTEM: COLOR TOKENS (BASE PALETTE)
+ * Defines the color palette (Tailwind style) with strict semantic roles.
+ * Prohibits the use of hardcoded hex values, ensuring
+ * brand consistency, scalability, and Dark Mode support.
  * ========================================================================= */
 val Slate950 = Color(0xFF040A24)
 val Slate900 = Color(0xFF0F172A)

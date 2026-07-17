@@ -1,28 +1,28 @@
 package com.jastin.boveda.presentation.model
 
 /* =========================================================================
- * MODELOS DE PRESENTACIÓN (VIEW STATE)
- * Representación visual optimizada de los datos.
- * * Separación de Responsabilidades: Contienen datos pre-procesados (ej. Strings formateados),
- *   aislando las entidades de dominio y el esquema de BD.
- * * Rendimiento UI: Al delegar el formateo a capas inferiores, se garantiza que
- *   Compose actúe como una UI pasiva, evitando lógica pesada durante la recomposición.
+ * VIEW STATE MODELS
+ * Optimized visual representation of data.
+ * * Separation of Concerns: Contains pre-processed data (e.g., formatted strings),
+ *   isolating domain entities and DB schema.
+ * * UI Performance: By delegating formatting to lower layers, we ensure
+ *   Compose acts as a passive UI, avoiding heavy logic during recomposition.
  * ========================================================================= */
 
-// --- 1. ESTADOS DE INTERFAZ ---
-// Diccionario de los posibles estados visuales de una transacción.
+// --- 1. INTERFACE STATES ---
+// Dictionary of possible visual states for a transaction.
 enum class TxUiStatus { COMPLETED, PENDING }
 
-// --- 2. SUB-MODELOS ANIDADOS ---
-// Nodos de información que componen listas complejas dentro de la vista principal (ej. Auditoría).
+// --- 2. NESTED SUB-MODELS ---
+// Information nodes that compose complex lists within the main view (e.g., audit trails).
 data class TimelineEventUi(
     val status: String,
     val time: String,
     val done: Boolean
 )
 
-// --- 3. PAYLOAD PRINCIPAL ---
-// El DTO final "masticado" que consume Jetpack Compose para pintar la vista de detalle.
+// --- 3. MAIN PAYLOAD ---
+// The final "processed" DTO consumed by Jetpack Compose to render the detail view.
 data class TransactionUiModel(
     val id: String,
     val title: String,

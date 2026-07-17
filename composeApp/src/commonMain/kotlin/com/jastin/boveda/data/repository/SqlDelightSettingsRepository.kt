@@ -4,11 +4,11 @@ import com.jastin.boveda.database.BovedaDatabase
 import com.jastin.boveda.domain.repository.SettingsRepository
 
 /* =========================================================================
- * REPOSITORIO DE AJUSTES (SQLDELIGHT)
- * Gestiona la persistencia de configuraciones globales:
- * * Escritura Síncrona: Asegura el guardado inmediato mediante transacciones.
- * * Tolerancia a Fallos: Captura errores de I/O para garantizar la
- * continuidad del arranque de la UI sin perder trazabilidad en logs.
+ * SETTINGS REPOSITORY (SQLDELIGHT)
+ * Manages the persistence of global configurations:
+ * * Synchronous Writing: Ensures immediate saving via transactions.
+ * * Fault Tolerance: Catches I/O errors to guarantee
+ * UI startup continuity without losing traceability in logs.
  * ========================================================================= */
 class SqlDelightSettingsRepository(
     private val database: BovedaDatabase
@@ -23,9 +23,9 @@ class SqlDelightSettingsRepository(
                 com.jastin.boveda.globalIsDarkMode.value = savedTheme == 1L
             }
         } catch (e: Exception) {
-            // Evitamos el "Swallowed Exception".
-            // No detenemos la app, pero dejamos un registro para el desarrollador.
-            println("⚙️ Database Warning: No se pudo cargar el tema -> ${e.message}")
+            // We avoid the "Swallowed Exception".
+            // We don't stop the app, but leave a log for the developer.
+            println("⚙️ Database Warning: Could not load the theme -> ${e.message}")
         }
     }
 
@@ -36,7 +36,7 @@ class SqlDelightSettingsRepository(
                 queries.saveThemePreference(if (isDark) 1L else 0L)
             }
         } catch (e: Exception) {
-            println("⚙️ Database Warning: No se pudo guardar el tema -> ${e.message}")
+            println("⚙️ Database Warning: Could not save the theme -> ${e.message}")
         }
     }
 }

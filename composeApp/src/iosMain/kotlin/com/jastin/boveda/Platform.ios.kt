@@ -3,11 +3,11 @@ package com.jastin.boveda
 import platform.UIKit.UIDevice
 
 /* =========================================================================
- * IDENTIFICADOR DE PLATAFORMA (IOS)
+ * PLATFORM IDENTIFIER (IOS)
  * ========================================================================= */
 class IOSPlatform: Platform {
 
-    // --- 1. METADATOS DEL SISTEMA ---
+    // --- 1. SYSTEM METADATA ---
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
 

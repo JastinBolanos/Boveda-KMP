@@ -39,10 +39,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /* =========================================================================
- * PANTALLA PRINCIPAL (DASHBOARD)
- * Tab principal de la aplicación. Actúa como el centro neurálgico de la UI,
- * observando los saldos en tiempo real y proveyendo acceso rápido a transferencias
- * y movimientos recientes.
+ * MAIN SCREEN (DASHBOARD)
+ * Main tab of the application. Acts as the nerve center of the UI,
+ * observing balances in real time and providing quick access to transfers
+ * and recent movements.
  * ========================================================================= */
 
 object HomeTab : Tab {
@@ -51,51 +51,43 @@ object HomeTab : Tab {
         @Composable
         get() {
             val icon = rememberVectorPainter(Icons.Default.Home)
-            return remember { TabOptions(index = 0u, title = "Inicio", icon = icon) }
+            return remember { TabOptions(index = 0u, title = "Home", icon = icon) }
         }
 
     @Composable
     override fun Content() {
 
-        // --- ENRUTADORES Y PUENTES (COMPOSITION LOCALS) ---
-        // NOTA: Se utiliza `navigator.parent` para el stack de navegación superior,
-        // asegurando que las transiciones a pantalla completa no queden restringidas
-        // por el scaffold del BottomNavigation.
+        // --- ROUTERS AND BRIDGES (COMPOSITION LOCALS) ---
         val navigator = LocalNavigator.currentOrThrow.parent ?: LocalNavigator.currentOrThrow
         val tabNavigator = LocalTabNavigator.current
 
-        // PROVEEDOR DE NAVEGACIÓN (DRAWER)
-        // Accede al estado global del Drawer mediante CompositionLocal.
-        // Patrón: Evita el 'Prop Drilling' permitiendo la activación del Drawer
-        // desde cualquier subcomponente de la jerarquía de UI.
+        // NAVIGATION PROVIDER (DRAWER)
         val drawerState = LocalMenuDrawerState.current
         val scope = rememberCoroutineScope()
 
-        // --- OBSERVACIÓN DEL DOMINIO ---
+        // --- DOMAIN OBSERVATION ---
         val repository = com.jastin.boveda.globalTransactionRepository
         val balanceState = repository.currentBalance.collectAsState()
         val balance = balanceState.value
         val allTransactionsState = repository.transactions.collectAsState()
 
-        // ADAPTACIÓN ARQUITECTÓNICA (PRESENTATION MAPPER)
-        // Como el dominio ahora expone entidades puras desacopladas de la UI, interceptamos
-        // el flujo y transformamos las transacciones al modelo visual requerido por el componente.
+        // ARCHITECTURAL ADAPTATION (PRESENTATION MAPPER)
         val transactions = allTransactionsState.value.take(3).map { tx ->
             TransactionUiModel(
                 id = tx.id,
                 title = tx.receiverName,
                 amount = tx.amount,
                 status = if (tx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
-                date = "Hoy",
+                date = "Today",
                 time = "00:00",
-                method = "Saldo Bóveda",
+                method = "Vault Balance",
                 recipient = tx.receiverName,
                 reference = "REF-${tx.id.take(6)}",
                 timeline = emptyList()
             )
         }
 
-        // --- REGLAS DE NEGOCIO VISUALES ---
+        // --- VISUAL BUSINESS RULES ---
         val displayBalance = max(0.0, balance)
         val hasInsufficientFunds = balance <= 0
 
@@ -119,7 +111,7 @@ object HomeTab : Tab {
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text("Bienvenido de vuelta", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Medium)
+                            Text("Welcome back", fontSize = 12.sp, color = Slate400, fontWeight = FontWeight.Medium)
                             Text("Jastin Abel", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
@@ -134,14 +126,14 @@ object HomeTab : Tab {
                 modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()
             ) {
 
-                // --- 4. TARJETA DE SALDO PRINCIPAL ---
+                // --- 4. MAIN BALANCE CARD ---
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     shape = RoundedCornerShape(32.dp),
                     colors = CardDefaults.cardColors(containerColor = Slate950)
                 ) {
                     Column(modifier = Modifier.padding(28.dp)) {
-                        Text("Saldo Disponible", color = Slate400, fontSize = 14.sp)
+                        Text("Available Balance", color = Slate400, fontSize = 14.sp)
                         Text(
                             text = formatMoney(displayBalance),
                             color = if (hasInsufficientFunds) Red500 else Color.White,
@@ -160,20 +152,20 @@ object HomeTab : Tab {
                             ),
                             shape = RoundedCornerShape(16.dp)
                         ) {
-                            Text(if (hasInsufficientFunds) "Saldo Insuficiente" else "Transferir", fontWeight = FontWeight.Bold)
+                            Text(if (hasInsufficientFunds) "Insufficient Funds" else "Transfer", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
-                // --- 5. SECCIÓN DE ACTIVIDAD RECIENTE ---
+                // --- 5. RECENT ACTIVITY SECTION ---
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp, top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Actividad Reciente", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text("Recent Activity", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
                     TextButton(onClick = { tabNavigator.current = ActivityTab }) {
-                        Text("Ver todo", color = Emerald500, fontWeight = FontWeight.SemiBold)
+                        Text("See all", color = Emerald500, fontWeight = FontWeight.SemiBold)
                     }
                 }
 

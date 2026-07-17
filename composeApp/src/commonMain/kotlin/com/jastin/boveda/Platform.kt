@@ -1,9 +1,9 @@
 package com.jastin.boveda
 
 /* =========================================================================
- * CONTRATO DE PLATAFORMA (EXPECT)
- * Abstracción para identificar el SO anfitrión (Android/iOS) y ejecutar
- * lógica específica de plataforma sin acoplamiento nativo.
+ * PLATFORM CONTRACT (EXPECT)
+ * Abstraction to identify the host OS (Android/iOS) and execute
+ * platform-specific logic without native coupling.
  * ========================================================================= */
 interface Platform {
     val name: String

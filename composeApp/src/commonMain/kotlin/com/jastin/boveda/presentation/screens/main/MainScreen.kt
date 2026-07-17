@@ -42,11 +42,11 @@ import kotlinx.coroutines.launch
 
 /* =========================================================================
  * ROOT NAVIGATOR & MAIN SCAFFOLD
- * Contenedor principal tras el Splash. Gestiona el enrutamiento interno
- * (Tabs), la navegación global (Bottom Bar) y el Drawer lateral.
+ * Main container after Splash. Manages internal routing (Tabs), global
+ * navigation (Bottom Bar), and side Drawer.
  * ========================================================================= */
 
-val LocalMenuDrawerState = compositionLocalOf<DrawerState> { error("DrawerState no provisto") }
+val LocalMenuDrawerState = compositionLocalOf<DrawerState> { error("DrawerState not provided") }
 
 class MainScreen : Screen {
 
@@ -56,7 +56,7 @@ class MainScreen : Screen {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        // --- 1. CONFIGURACIÓN DEL MENÚ LATERAL (RTL HACK) ---
+        // --- 1. SIDE MENU CONFIGURATION (RTL HACK) ---
         CompositionLocalProvider(
             LocalLayoutDirection provides LayoutDirection.Rtl,
             LocalMenuDrawerState provides drawerState
@@ -77,7 +77,7 @@ class MainScreen : Screen {
             ) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-                    // --- 2. SISTEMA DE PESTAÑAS Y NAVEGACIÓN ---
+                    // --- 2. TAB SYSTEM AND NAVIGATION ---
                     TabNavigator(HomeTab) {
                         val tabNavigator = LocalTabNavigator.current
 
@@ -107,7 +107,7 @@ class MainScreen : Screen {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                            TabIconItem(tab = HomeTab, icon = Icons.Default.Home, label = "Inicio", isSelected = tabNavigator.current == HomeTab) { tabNavigator.current = HomeTab }
+                                            TabIconItem(tab = HomeTab, icon = Icons.Default.Home, label = "Home", isSelected = tabNavigator.current == HomeTab) { tabNavigator.current = HomeTab }
                                         }
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                             FloatingTransferButton {
@@ -116,7 +116,7 @@ class MainScreen : Screen {
                                             }
                                         }
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                            TabIconItem(tab = ActivityTab, icon = Icons.Default.Insights, label = "Actividad", isSelected = tabNavigator.current == ActivityTab) { tabNavigator.current = ActivityTab }
+                                            TabIconItem(tab = ActivityTab, icon = Icons.Default.Insights, label = "Activity", isSelected = tabNavigator.current == ActivityTab) { tabNavigator.current = ActivityTab }
                                         }
                                     }
                                 }
@@ -132,7 +132,7 @@ class MainScreen : Screen {
         }
     }
 
-    // --- 4. COMPONENTES PRIVADOS DEL MENÚ (STATELESS) ---
+    // --- 4. PRIVATE MENU COMPONENTS (STATELESS) ---
     @Composable
     private fun DrawerMenuContent() {
         val isDarkMode by com.jastin.boveda.globalIsDarkMode.collectAsState()
@@ -146,15 +146,15 @@ class MainScreen : Screen {
                 modifier = Modifier.padding(top = 24.dp, bottom = 32.dp)
             )
 
-            DrawerItem(icon = Icons.Default.Security, text = "Token Digital")
-            DrawerItem(icon = Icons.Default.Lock, text = "Seguridad y privacidad")
-            DrawerItem(icon = Icons.Default.Place, text = "Puntos de atención")
-            DrawerItem(icon = Icons.Default.Headset, text = "Comunícate con nosotros")
-            DrawerItem(icon = Icons.Default.Info, text = "Acerca de Bóveda")
+            DrawerItem(icon = Icons.Default.Security, text = "Digital Token")
+            DrawerItem(icon = Icons.Default.Lock, text = "Security & Privacy")
+            DrawerItem(icon = Icons.Default.Place, text = "Service Points")
+            DrawerItem(icon = Icons.Default.Headset, text = "Contact Us")
+            DrawerItem(icon = Icons.Default.Info, text = "About Vault")
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Interruptor de Modo Oscuro/Modo Claro
+            // Dark/Light Mode Switch
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -165,13 +165,13 @@ class MainScreen : Screen {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = if (isDarkMode) Icons.Default.DarkMode else Icons.Default.LightMode,
-                        contentDescription = "Modo Oscuro",
+                        contentDescription = "Dark Mode",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
-                        text = "Modo Oscuro",
+                        text = "Dark Mode",
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium
@@ -192,7 +192,7 @@ class MainScreen : Screen {
                 )
             }
 
-            // Nota del Desarrollador
+            // Developer Note
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 shape = RoundedCornerShape(16.dp),
@@ -200,14 +200,14 @@ class MainScreen : Screen {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "Nota del Desarrollador",
+                        "Developer Note",
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        "Este software fue construido con KMP. Esta sección es demostrativa para exhibir arquitectura y UI/UX, por lo que las opciones anteriores no están conectadas a flujos de producción.",
+                        "This software was built with KMP. This section is illustrative to showcase architecture and UI/UX; therefore, the options above are not connected to production flows.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         lineHeight = 16.sp
@@ -236,7 +236,7 @@ class MainScreen : Screen {
         }
     }
 
-    // --- 5. COMPONENTES PRIVADOS DEL BOTTOM NAV (STATELESS) ---
+    // --- 5. PRIVATE BOTTOM NAV COMPONENTS (STATELESS) ---
     @Composable
     private fun TabIconItem(tab: Tab, icon: ImageVector, label: String, isSelected: Boolean, onClick: () -> Unit) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() }) {
@@ -256,7 +256,7 @@ class MainScreen : Screen {
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() },
             contentAlignment = Alignment.Center
         ) {
-            Icon(imageVector = Icons.Default.SwapHoriz, contentDescription = "Transferir", tint = Emerald500, modifier = Modifier.size(32.dp))
+            Icon(imageVector = Icons.Default.SwapHoriz, contentDescription = "Transfer", tint = Emerald500, modifier = Modifier.size(32.dp))
         }
     }
 }

@@ -5,12 +5,12 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 
 /* =========================================================================
- * DRIVER DE BASE DE DATOS (ANDROID)
- * Implementa la inicialización física del motor SQLite delegando al SO:
- * * Abstracción KMP: Resuelve la dependencia del sistema de archivos,
- * aislando la lógica compartida del entorno nativo.
- * * Seguridad/Sandbox: Utiliza el [Context] para garantizar la creación
- * del archivo .db dentro del espacio aislado de la aplicación.
+ * DATABASE DRIVER (ANDROID)
+ * Implements the physical initialization of the SQLite engine, delegating to the OS:
+ * * KMP Abstraction: Resolves the file system dependency, isolating shared
+ * logic from the native environment.
+ * * Security/Sandbox: Uses the [Context] to guarantee the creation of the
+ * .db file within the application's sandboxed space.
  * ========================================================================= */
 actual class DatabaseDriverFactory(private val context: Context) {
     actual fun createDriver(): SqlDriver {

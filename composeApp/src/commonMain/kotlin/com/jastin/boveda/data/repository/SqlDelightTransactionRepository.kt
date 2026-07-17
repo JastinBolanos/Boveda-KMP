@@ -18,10 +18,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /* =========================================================================
- * REPOSITORIO DE TRANSACCIONES (SINGLE SOURCE OF TRUTH)
- * * Implementación de [TransactionRepository] mediante SQLDelight:
- * 1. Mapeo: Extrae los datos de SQLite y los convierte ESTRICTAMENTE a
- * entidades de Dominio puro, aislando la BD de la Interfaz de Usuario.
+ * TRANSACTION REPOSITORY (SINGLE SOURCE OF TRUTH)
+ * * [TransactionRepository] implementation using SQLDelight:
+ * 1. Mapping: Extracts data from SQLite and STRICTLY converts it to
+ * pure Domain entities, isolating the DB from the User Interface.
  * ========================================================================= */
 class SqlDelightTransactionRepository(
     database: BovedaDatabase,
@@ -30,7 +30,7 @@ class SqlDelightTransactionRepository(
 
     private val queries = database.transactionEntityQueries
 
-    // --- 1. LECTURA Y MAPEO DE CAPAS (ENTITY -> DOMAIN) ---
+    // --- 1. LAYER READING AND MAPPING (ENTITY -> DOMAIN) ---
     override val transactions: StateFlow<List<Transaction>> = queries.selectAllTransactions()
         .asFlow()
         .mapToList(Dispatchers.IO)
@@ -40,7 +40,7 @@ class SqlDelightTransactionRepository(
                     id = entity.id,
                     amount = -entity.amount,
                     receiverName = entity.title,
-                    receiverAccount = "Cuenta Local",
+                    receiverAccount = "Local Account",
                     status = if (entity.status == TransactionStatus.PENDING.name) TransactionStatus.PENDING else TransactionStatus.COMPLETED,
                     timestamp = entity.timestamp
                 )
@@ -51,7 +51,7 @@ class SqlDelightTransactionRepository(
             initialValue = emptyList()
         )
 
-    // --- MOTOR DE CÁLCULO DE SALDO ---
+    // --- BALANCE CALCULATION ENGINE ---
     override val currentBalance: StateFlow<Double> = transactions.map { list ->
         val initialBalance = 1500.00
         val totalSpent = list.sumOf { it.amount }
@@ -62,7 +62,7 @@ class SqlDelightTransactionRepository(
         initialValue = 1500.00
     )
 
-    // --- ESCRITURA (DOMAIN -> ENTITY) ---
+    // --- WRITING (DOMAIN -> ENTITY) ---
     override fun saveTransaction(transaction: Transaction) {
         scope.launch(Dispatchers.IO) {
             try {
@@ -78,7 +78,7 @@ class SqlDelightTransactionRepository(
                 )
                 BovedaSyncWorker().enqueueSync()
             } catch (e: Exception) {
-                println("⚠️ Error SQL / Idempotencia: ${e.message}")
+                println("⚠️ SQL / Idempotency Error: ${e.message}")
             }
         }
     }

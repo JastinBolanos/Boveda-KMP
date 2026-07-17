@@ -10,7 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /* =========================================================================
- * IMPLEMENTACIÓN DEL CONTRATO KMP ('actual') PARA iOS
+ * KMP CONTRACT IMPLEMENTATION ('actual') FOR iOS
  * ========================================================================= */
 actual class BovedaSyncWorker actual constructor() {
 
@@ -19,10 +19,10 @@ actual class BovedaSyncWorker actual constructor() {
     actual fun enqueueSync() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
-                println("🍎 iOS Background: Iniciando sincronización...")
+                println("🍎 iOS Background: Starting synchronization...")
                 syncUseCase()
             } catch (e: Exception) {
-                println("⚠️ iOS Background: Fallo temporal de red. Datos seguros en SQLite.")
+                println("⚠️ iOS Background: Temporary network failure. Data safe in SQLite.")
             }
         }
     }

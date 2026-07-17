@@ -5,20 +5,20 @@ import java.util.Date
 import java.util.Locale
 
 /* =========================================================================
- * PROVEEDOR DE TIEMPO (ANDROID / JVM)
- * Implementa la captura de tiempo nativa para la plataforma Android.
+ * TIME PROVIDER (ANDROID / JVM)
+ * Implements native time capture for the Android platform.
  * ========================================================================= */
 actual fun getCurrentTimeMillis(): Long {
     return System.currentTimeMillis()
 }
 
 actual fun getCurrentTimeFormatted(): String {
-    // SEGURO: Usamos Locale.US para garantizar que los números siempre
-    // sean arábigos occidentales (0-9), sin importar el idioma del dispositivo.
+    // SAFE: We use Locale.US to ensure that numbers are always
+    // Western Arabic (0-9), regardless of the device's language.
     val formatter = SimpleDateFormat("HH:mm", Locale.US)
     return formatter.format(Date())
 }
 
 actual fun getCurrentDateFormatted(): String {
-    return "Hoy"
+    return "Today"
 }

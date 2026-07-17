@@ -6,8 +6,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,11 +29,11 @@ import com.jastin.boveda.utils.formatMoney
 import kotlin.math.abs
 
 /* =========================================================================
- * PANTALLA DE DETALLE DE TRANSACCIÓN (STATELESS)
- * Renderiza la información de un movimiento financiero. Al inyectar él
- * [TransactionUiModel] directamente a través de Voyager, se elimina la
- * dependencia de un ViewModel local y se optimiza el acceso a datos,
- * evitando re-consultas innecesarias a la persistencia.
+ * TRANSACTION DETAIL SCREEN (STATELESS)
+ * Renders the information of a financial movement. By injecting the
+ * [TransactionUiModel] directly via Voyager, we eliminate the
+ * dependency on a local ViewModel and optimize data access,
+ * avoiding unnecessary re-queries to the persistence layer.
  * ========================================================================= */
 
 data class DetailScreen(val transactionId: String) : Screen {
@@ -45,7 +43,7 @@ data class DetailScreen(val transactionId: String) : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val transactions by com.jastin.boveda.globalTransactionRepository.transactions.collectAsState()
 
-        // 1. Obtenemos la entidad pura de Dominio
+        // 1. Get the raw Domain entity
         val domainTx = transactions.find { it.id == transactionId }
 
         if (domainTx == null) {
@@ -55,23 +53,23 @@ data class DetailScreen(val transactionId: String) : Screen {
             return
         }
 
-        // 2. EL PUENTE (MAPPER DOMAIN -> UI)
-        // Transformamos los datos crudos en la estructura que exige la UI
+        // 2. THE BRIDGE (MAPPER DOMAIN -> UI)
+        // Transform raw data into the structure required by the UI
         val liveTransaction = TransactionUiModel(
             id = domainTx.id,
             title = domainTx.receiverName,
             amount = domainTx.amount,
             status = if (domainTx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
-            date = "Hoy",
+            date = "Today",
             time = "00:00",
-            method = "Saldo Bóveda",
+            method = "Vault Balance",
             recipient = domainTx.receiverName,
             reference = "REF-${domainTx.id.take(6)}",
             timeline = listOf(
-                TimelineEventUi("Iniciada", "Ahora", true),
+                TimelineEventUi("Initiated", "Now", true),
                 TimelineEventUi(
-                    status = if (domainTx.status == TransactionStatus.PENDING) "Procesando en red..." else "Confirmada",
-                    time = if (domainTx.status == TransactionStatus.PENDING) "--:--" else "Ahora",
+                    status = if (domainTx.status == TransactionStatus.PENDING) "Processing in network..." else "Confirmed",
+                    time = if (domainTx.status == TransactionStatus.PENDING) "--:--" else "Now",
                     done = domainTx.status == TransactionStatus.COMPLETED
                 )
             )
@@ -89,7 +87,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                     IconButton(onClick = { navigator.pop() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
-                    Text("Detalle de Operación", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                    Text("Operation Detail", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
                     Spacer(modifier = Modifier.width(48.dp))
                 }
             },
@@ -97,40 +95,40 @@ data class DetailScreen(val transactionId: String) : Screen {
         ) { padding ->
             Column(modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()) {
 
-                // --- IMPACTO FINANCIERO (HERO SECTION) ---
+                // --- FINANCIAL IMPACT (HERO SECTION) ---
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
 
                     val isPending = liveTransaction.status == TxUiStatus.PENDING
                     Text(
-                        text = if (isPending) "¡Operación encolada!" else "¡Transferencia Exitosa!",
+                        text = if (isPending) "Operation queued!" else "Successful Transfer!",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = if (isPending) Amber500 else Emerald500,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    Text(if (liveTransaction.amount > 0) "RECIBISTE" else "ENVIASTE", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Slate400)
+                    Text(if (liveTransaction.amount > 0) "YOU RECEIVED" else "YOU SENT", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Slate400)
                     Text(formatMoney(abs(liveTransaction.amount)), fontSize = 40.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface)
                     Text(liveTransaction.title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
                 }
 
-                // --- METADATOS DE LA OPERACIÓN ---
+                // --- OPERATION METADATA ---
                 BovedaCard(modifier = Modifier.padding(bottom = 16.dp)) {
                     Column(modifier = Modifier.padding(24.dp)) {
-                        DetailRow("Estado", if (liveTransaction.status == TxUiStatus.PENDING) "Pendiente" else "Completado")
+                        DetailRow("Status", if (liveTransaction.status == TxUiStatus.PENDING) "Pending" else "Completed")
                         HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
-                        DetailRow("Fecha", "${liveTransaction.date}, ${liveTransaction.time}")
+                        DetailRow("Date", "${liveTransaction.date}, ${liveTransaction.time}")
                         HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
-                        DetailRow("Método", liveTransaction.method)
+                        DetailRow("Method", liveTransaction.method)
                         HorizontalDivider(color = MaterialTheme.colorScheme.background, modifier = Modifier.padding(vertical = 12.dp))
-                        DetailRow("Referencia", liveTransaction.reference)
+                        DetailRow("Reference", liveTransaction.reference)
                     }
                 }
 
-                // --- LÍNEA DE TIEMPO ---
+                // --- TIMELINE ---
                 BovedaCard {
                     Column(modifier = Modifier.padding(24.dp)) {
-                        Text("Historial de la operación", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
+                        Text("Operation History", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
                         liveTransaction.timeline.forEach { event ->
                             Row(modifier = Modifier.padding(bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(12.dp).background(if(event.done) Emerald500 else Slate400, CircleShape))
@@ -154,7 +152,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                         contentColor = MaterialTheme.colorScheme.background
                     )
                 ) {
-                    Text("Volver al Inicio", fontWeight = FontWeight.Bold)
+                    Text("Return Home", fontWeight = FontWeight.Bold)
                 }
             }
         }

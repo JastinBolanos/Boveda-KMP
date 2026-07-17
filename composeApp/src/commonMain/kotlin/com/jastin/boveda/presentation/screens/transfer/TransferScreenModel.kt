@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /* =========================================================================
- * SCREEN MODEL DE TRANSFERENCIAS (MVI PATTERN)
- * Gestor de estado y lógica de negocio para la pantalla de pagos.
+ * TRANSFER SCREEN MODEL (MVI PATTERN)
+ * State manager and business logic for the payments screen.
  * ========================================================================= */
 
-// --- 1. CONTRATO MVI (STATE & INTENTS) ---
+// --- 1. MVI CONTRACT (STATE & INTENTS) ---
 data class TransferState(
     val amount: String = "",
     val recipient: String = "",
@@ -37,7 +37,7 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
         mutableState.update { it.copy(balance = repository.currentBalance.value) }
     }
 
-    // --- 2. PROCESAMIENTO DE ACCIONES (REDUCER) ---
+    // --- 2. ACTION PROCESSING (REDUCER) ---
     fun onIntent(intent: TransferIntent) {
         when (intent) {
             is TransferIntent.UpdateAmount -> {
@@ -47,10 +47,9 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                     input = "0$input"
                 }
 
-                // EL BLINDAJE FINANCIERO (REGEX):
-                // ARREGLO LINTER: Se simplificaron los caracteres de escape (\$)
-                // ^(0|[1-9]\d*) -> Empieza con 0, o con un número del 1 al 9
-                // (\.\d{0,2})?$ -> Puede tener un punto opcional con máximo 2 decimales.
+                // FINANCIAL SHIELD (REGEX):
+                // ^(0|[1-9]\d*) -> Starts with 0, or with a number 1-9
+                // (\.\d{0,2})?$ -> Can have an optional point with max 2 decimals.
                 val isValidMoneyFormat = input.isEmpty() || input.matches(Regex("""^(0|[1-9]\d*)(\.\d{0,2})?$"""))
 
                 if (isValidMoneyFormat) {
@@ -62,24 +61,23 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
         }
     }
 
-    // --- 3. EJECUCIÓN TRANSACCIONAL (FOREGROUND + FALLBACK) ---
+    // --- 3. TRANSACTION EXECUTION (FOREGROUND + FALLBACK) ---
     fun executeTransfer() {
         val amountNum = state.value.amount.toDoubleOrNull() ?: return
-        // Bloqueo matemático duro: Ni montos negativos, ni sobregiros, ni más de 500
+        // Hard mathematical block: No negative amounts, no overdrafts, no more than $500.00
         if (amountNum <= 0 || amountNum > state.value.balance || amountNum > 500.00) return
 
         screenModelScope.launch {
             mutableState.update { it.copy(isLoading = true) }
             val safeId = "tx_${kotlin.random.Random.nextLong(100000, 999999)}"
 
-            // ARREGLO ARQUITECTÓNICO: Mapeo UI -> DOMAIN
-            // El ScreenModel empaqueta los datos de la UI en una Entidad de Dominio
-            // pura para enviarla al Repositorio. Toda la "basura visual" se descartó.
+            // ARCHITECTURAL FIX: UI -> DOMAIN Mapping
+            // ScreenModel packages UI data into a pure Domain Entity to send to the Repository.
             val newTx = Transaction(
                 id = safeId,
                 amount = -amountNum,
                 receiverName = state.value.recipient,
-                receiverAccount = "Cuenta Local",
+                receiverAccount = "Local Account",
                 status = TransactionStatus.PENDING,
                 timestamp = getCurrentTimeMillis()
             )
@@ -93,7 +91,7 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
                     repository.updateTransactionStatus(safeId, TransactionStatus.COMPLETED)
                 }
             } catch (_: Exception) {
-                println("Fallo en primer plano. El Worker lo tomará.")
+                println("Foreground failure. The Worker will handle it.")
             }
 
             mutableState.update {

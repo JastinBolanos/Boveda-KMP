@@ -27,12 +27,11 @@ import com.jastin.boveda.presentation.model.TxUiStatus
 import com.jastin.boveda.presentation.screens.detail.DetailScreen
 
 /* =========================================================================
- * VISTA DE ACTIVIDAD (TAB COMPONENT)
+ * ACTIVITY VIEW (TAB COMPONENT)
  * =========================================================================
- * Implementa el historial financiero mediante el contrato [Tab].
- * Optimiza el filtrado de datos con [remember] y utiliza el navegador
- * superior (parent) para permitir transiciones a pantalla completa fuera
- * del alcance del BottomNavigation.
+ * Implements the financial history via the [Tab] contract.
+ * Optimizes data filtering with [remember] and uses the parent navigator
+ * to allow full-screen transitions outside the BottomNavigation scope.
  */
 object ActivityTab : Tab {
 
@@ -40,42 +39,40 @@ object ActivityTab : Tab {
         @Composable
         get() {
             val icon = rememberVectorPainter(Icons.Default.Insights)
-            return remember { TabOptions(index = 1u, title = "Actividad", icon = icon) }
+            return remember { TabOptions(index = 1u, title = "Activity", icon = icon) }
         }
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow.parent ?: LocalNavigator.currentOrThrow
-        var selectedFilter by remember { mutableStateOf("Todos") }
-        val filters = listOf("Todos", "Entradas", "Salidas", "Pendientes")
+        var selectedFilter by remember { mutableStateOf("All") }
+        val filters = listOf("All", "Inbound", "Outbound", "Pending")
 
         val repository = com.jastin.boveda.globalTransactionRepository
         val domainTransactions = repository.transactions.collectAsState().value
 
-        // EL PUENTE (MAPPER DOMAIN -> UI)
-        // Transformamos las entidades puras antes de que lleguen a la lógica de filtrado visual.
+        // THE BRIDGE (MAPPER DOMAIN -> UI)
+        // Transform raw entities before they reach visual filtering logic.
         val allTransactions = domainTransactions.map { tx ->
             TransactionUiModel(
                 id = tx.id,
                 title = tx.receiverName,
                 amount = tx.amount,
                 status = if (tx.status == TransactionStatus.PENDING) TxUiStatus.PENDING else TxUiStatus.COMPLETED,
-                date = "Hoy",
+                date = "Today",
                 time = "00:00",
-                method = "Saldo Bóveda",
+                method = "Vault Balance",
                 recipient = tx.receiverName,
                 reference = "REF-${tx.id.take(6)}",
                 timeline = emptyList()
             )
         }
 
-        // Al usar allTransactions (que ahora es List<TransactionUiModel>),
-        // tu lógica original de filtrado por TxUiStatus vuelve a funcionar perfectamente.
         val filteredTransactions = remember(selectedFilter, allTransactions) {
             when (selectedFilter) {
-                "Entradas" -> allTransactions.filter { it.amount > 0 && it.status == TxUiStatus.COMPLETED }
-                "Salidas" -> allTransactions.filter { it.amount < 0 && it.status == TxUiStatus.COMPLETED }
-                "Pendientes" -> allTransactions.filter { it.status == TxUiStatus.PENDING }
+                "Inbound" -> allTransactions.filter { it.amount > 0 && it.status == TxUiStatus.COMPLETED }
+                "Outbound" -> allTransactions.filter { it.amount < 0 && it.status == TxUiStatus.COMPLETED }
+                "Pending" -> allTransactions.filter { it.status == TxUiStatus.PENDING }
                 else -> allTransactions
             }
         }
@@ -89,7 +86,7 @@ object ActivityTab : Tab {
                         .statusBarsPadding()
                         .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
-                    Text("Actividad", fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
+                    Text("Activity", fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(bottom = 16.dp))
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         filters.forEach { filter ->
                             val isSelected = selectedFilter == filter

@@ -5,31 +5,31 @@ import io.ktor.client.request.get
 import kotlinx.coroutines.delay
 
 /* =========================================================================
- * SIMULADOR DE RED (NETWORK CLIENT)
- * Emula la capa HTTP para validar la lógica de sincronización offline.
+ * NETWORK CLIENT SIMULATOR
+ * Emulates the HTTP layer to validate the offline synchronization logic.
  * ========================================================================= */
 class NetworkClient {
 
-    // ✅ BLINDAJE DE MEMORIA (SINGLETON)
-    // Al usar 'companion object', garantizamos que solo exista UN motor HTTP
-    // en toda la vida de la app, sin importar cuántas veces instancies NetworkClient.
-    // Esto evita el colapso de RAM y Thread Leaks durante reintentos del Worker.
+    // MEMORY SHIELD (SINGLETON)
+    // By using 'companion object', we guarantee that only ONE HTTP engine exists
+    // throughout the app's lifecycle, regardless of how many times you instantiate NetworkClient.
+    // This prevents RAM collapse and Thread Leaks during Worker retries.
     companion object {
         private val httpClient = HttpClient()
     }
 
     suspend fun processPendingTransaction(transactionId: String): Boolean {
-        // --- EL PING DE LA VERDAD ---
-        // Es superrápido porque devuelve una respuesta vacía. Si no hay internet, esto explota.
+        // --- THE PING OF TRUTH ---
+        // It's super fast because it returns an empty response. If there is no internet, this fails.
         try {
             httpClient.get("https://clients3.google.com/generate_204")
         } catch (e: Exception) {
-            throw Exception("Dispositivo sin conexión real a internet: ${e.message}")
+            throw Exception("Device without real internet connection: ${e.message}")
         }
 
-        // --- SIMULADOR DEL BANCO ---
-        // Si el código llega hasta aquí, ES PORQUE SÍ HAY INTERNET.
-        // Ahora sí, simulamos el tiempo que tardaría el banco en procesar el pago.
+        // --- BANK SIMULATOR ---
+        // If the code reaches here, IT'S BECAUSE THERE IS INTERNET.
+        // Now, we simulate the time it would take the bank to process the payment.
         delay(1500)
 
         return true

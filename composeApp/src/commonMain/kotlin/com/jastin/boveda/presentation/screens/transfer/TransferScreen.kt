@@ -36,7 +36,7 @@ import com.jastin.boveda.presentation.components.BovedaButton
 import com.jastin.boveda.presentation.theme.*
 
 /* =========================================================================
- * FORMULARIO DE TRANSFERENCIA (STATEFUL SCREEN)
+ * TRANSFER FORM (STATEFUL SCREEN)
  * ========================================================================= */
 data class TransferScreen(val currentBalance: Double) : Screen {
 
@@ -62,7 +62,7 @@ data class TransferScreen(val currentBalance: Double) : Screen {
             }
         }
 
-        // Envolvemos todo en un Box para poder superponer la pantalla de carga
+        // We wrap everything in a Box to overlay the loading screen
         Box(modifier = Modifier.fillMaxSize()) {
 
             Scaffold(
@@ -78,10 +78,10 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                             onClick = { navigator.pop() },
                             enabled = !state.isLoading
                         ) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás", tint = MaterialTheme.colorScheme.onSurface)
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                         }
                         Text(
-                            text = "Transferir",
+                            text = "Transfer",
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             modifier = Modifier.weight(1f),
@@ -100,10 +100,10 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                         .fillMaxSize()
                         .imePadding()
                 ) {
-                    // --- INPUT DE MONTOS ---
+                    // --- AMOUNT INPUT ---
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "MONTO A ENVIAR",
+                            "AMOUNT TO SEND",
                             fontSize = 12.sp,
                             color = Slate400,
                             fontWeight = FontWeight.Bold
@@ -150,9 +150,9 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                         )
 
                         if (isOverdraft) {
-                            Text("Saldo insuficiente", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text("Insufficient balance", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         } else if (exceedsLimit) {
-                            Text("El monto máximo por envío es de S/ 500.00", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text("The maximum transfer limit is $500.00", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                     }
 
@@ -161,13 +161,13 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                     OutlinedTextField(
                         value = state.recipient,
                         onValueChange = { screenModel.onIntent(TransferIntent.UpdateRecipient(it)) },
-                        label = { Text("Destinatario") },
+                        label = { Text("Recipient") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         singleLine = true,
                         enabled = !state.isLoading,
 
-                        // UX POLISH: Auto-mayúsculas para nombres propios (Ej: "Juan Pérez")
+                        // UX POLISH: Auto-capitalize proper names (e.g., "John Doe")
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             capitalization = KeyboardCapitalization.Words
@@ -182,10 +182,10 @@ data class TransferScreen(val currentBalance: Double) : Screen {
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // --- ACCIÓN DE EJECUCIÓN (SUBMIT) ---
+                    // --- EXECUTION ACTION (SUBMIT) ---
                     BovedaButton(
-                        text = "Confirmar Transferencia",
-                        // Bloqueamos el botón si está cargando para evitar dobles envíos
+                        text = "Confirm Transfer",
+                        // Block button if loading to prevent double submissions
                         enabled = amountNum > 0 && !hasError && !hasTrailingDot && state.recipient.isNotBlank() && !state.isLoading,
                         onClick = {
                             screenModel.executeTransfer()
@@ -195,7 +195,7 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                 }
             }
 
-            // --- OVERLAY DE CARGA ---
+            // --- LOADING OVERLAY ---
             if (state.isLoading) {
                 Box(
                     modifier = Modifier
@@ -211,7 +211,7 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Procesando pago...",
+                            text = "Processing payment...",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
