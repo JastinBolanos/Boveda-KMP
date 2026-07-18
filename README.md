@@ -27,7 +27,7 @@ A design focused on transactional fluidity, integrating state-based micro-intera
 ### <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHp0bDAxNXk1bG56OHp6MHU5NWp3aG95Zm9ndzNjNmh2amxpNTZmNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F0VCptrJteVWDeLBHD/giphy.gif" width="70" align="absmiddle" /> Live Demo: Offline-First in Action
 > ** Notice the Status Bar:** Pay close attention to the Wi-Fi icon at the very top of the screen. This video demonstrates how the application gracefully handles connectivity drops by securely queuing the transaction locally (**Pending** state), and automatically synchronizing it (**Success** state) the exact second the network is restored.
 
-https://github.com/user-attachments/assets/319ecfea-90b9-4313-819b-5b7c494f4ac0
+https://github.com/user-attachments/assets/9232db47-98f0-4ad2-9eed-55c904a09140
 
 <br>
 
