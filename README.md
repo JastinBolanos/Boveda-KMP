@@ -119,7 +119,7 @@ cd BovedaKMP
 
 ---
 
-## ⚖️ License and Usage Rights
+## License and Usage Rights
 CRITICAL LEGAL NOTICE: This repository is a technical demonstration project designed exclusively for educational, study, and architectural analysis purposes.
 
 Source Code (Software): Licensed under MIT + Commons Clause v1.0. Use in production environments, monetization, handling of real data/funds, and the publication of derivative works constituting plagiarism or trivial modifications (30% Rule) are STRICTLY PROHIBITED. (See the LICENSE file for full terms).
