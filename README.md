@@ -124,4 +124,4 @@ CRITICAL LEGAL NOTICE: This repository is a technical demonstration project desi
 
 Source Code (Software): Licensed under MIT + Commons Clause v1.0. Use in production environments, monetization, handling of real data/funds, and the publication of derivative works constituting plagiarism or trivial modifications (30% Rule) are STRICTLY PROHIBITED. (See the LICENSE file for full terms).
 
-Visual Identity and Branding: Graphic assets, logos, UI designs, and the trade name "Bóveda KMP" are NOT open source. They are protected by Copyright © 2026 Jastin Bolaños. Extraction, modification, or commercial use is prohibited. (See the ASSETS_LICENSE.md file).
+Visual Identity and Branding: Graphic assets, logos, UI designs are NOT open source. They are protected by Copyright © 2026 Jastin Bolaños. Extraction, modification, or commercial use is prohibited. (See the ASSETS_LICENSE.md file).
