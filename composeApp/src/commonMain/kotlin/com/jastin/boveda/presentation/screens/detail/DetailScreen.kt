@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,6 @@ data class DetailScreen(val transactionId: String) : Screen {
         }
 
         // 2. THE BRIDGE (MAPPER DOMAIN -> UI)
-        // Transform raw data into the structure required by the UI
         val liveTransaction = TransactionUiModel(
             id = domainTx.id,
             title = domainTx.receiverName,
@@ -91,7 +91,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                     Spacer(modifier = Modifier.width(48.dp))
                 }
             },
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = Color.Transparent
         ) { padding ->
             Column(modifier = Modifier.padding(padding).padding(horizontal = 24.dp).fillMaxSize()) {
 

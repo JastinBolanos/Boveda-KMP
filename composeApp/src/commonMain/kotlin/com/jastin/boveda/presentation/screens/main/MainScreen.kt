@@ -1,5 +1,6 @@
 package com.jastin.boveda.presentation.screens.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -7,12 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Security
@@ -22,7 +21,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
@@ -39,12 +40,9 @@ import com.jastin.boveda.presentation.screens.transfer.TransferScreen
 import com.jastin.boveda.presentation.theme.*
 import com.jastin.boveda.utils.BackPressHandler
 import kotlinx.coroutines.launch
-
-/* =========================================================================
- * ROOT NAVIGATOR & MAIN SCAFFOLD
- * Main container after Splash. Manages internal routing (Tabs), global
- * navigation (Bottom Bar), and side Drawer.
- * ========================================================================= */
+import org.jetbrains.compose.resources.painterResource
+import boveda_kmp.composeapp.generated.resources.Res
+import boveda_kmp.composeapp.generated.resources.drawer_background
 
 val LocalMenuDrawerState = compositionLocalOf<DrawerState> { error("DrawerState not provided") }
 
@@ -56,7 +54,6 @@ class MainScreen : Screen {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        // --- 1. SIDE MENU CONFIGURATION (RTL HACK) ---
         CompositionLocalProvider(
             LocalLayoutDirection provides LayoutDirection.Rtl,
             LocalMenuDrawerState provides drawerState
@@ -67,17 +64,29 @@ class MainScreen : Screen {
                 drawerContent = {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         ModalDrawerSheet(
-                            drawerContainerColor = MaterialTheme.colorScheme.surface,
+                            drawerContainerColor = Color.Transparent,
+                            windowInsets = WindowInsets(0.dp),
                             modifier = Modifier.width(320.dp).fillMaxHeight()
                         ) {
-                            DrawerMenuContent()
+                            // CAJA PRINCIPAL DEL MENÚ
+                            Box(modifier = Modifier.fillMaxSize()) {
+
+                                // EL FONDO DEL PANEL LATERAL
+                                Image(
+                                    painter = painterResource(Res.drawable.drawer_background),
+                                    contentDescription = "Drawer Background",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+
+                                // EL CONTENIDO DEL MENÚ
+                                DrawerMenuContent()
+                            }
                         }
                     }
                 }
             ) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-
-                    // --- 2. TAB SYSTEM AND NAVIGATION ---
                     TabNavigator(HomeTab) {
                         val tabNavigator = LocalTabNavigator.current
 
@@ -88,9 +97,9 @@ class MainScreen : Screen {
                             tabNavigator.current = HomeTab
                         }
 
-                        // --- 3. BOTTOM NAVIGATION BAR ---
+                        // --- SCAFFOLD PRINCIPAL TRANSPARENTE ---
                         Scaffold(
-                            containerColor = MaterialTheme.colorScheme.background,
+                            containerColor = Color.Transparent,
                             bottomBar = {
                                 Surface(
                                     modifier = Modifier
@@ -107,7 +116,7 @@ class MainScreen : Screen {
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                            TabIconItem(tab = HomeTab, icon = Icons.Default.Home, label = "Home", isSelected = tabNavigator.current == HomeTab) { tabNavigator.current = HomeTab }
+                                            TabIconItem(icon = Icons.Default.Home, label = "Home", isSelected = tabNavigator.current == HomeTab) { tabNavigator.current = HomeTab }
                                         }
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                                             FloatingTransferButton {
@@ -116,7 +125,7 @@ class MainScreen : Screen {
                                             }
                                         }
                                         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                                            TabIconItem(tab = ActivityTab, icon = Icons.Default.Insights, label = "Activity", isSelected = tabNavigator.current == ActivityTab) { tabNavigator.current = ActivityTab }
+                                            TabIconItem(icon = Icons.Default.Insights, label = "Activity", isSelected = tabNavigator.current == ActivityTab) { tabNavigator.current = ActivityTab }
                                         }
                                     }
                                 }
@@ -132,18 +141,21 @@ class MainScreen : Screen {
         }
     }
 
-    // --- 4. PRIVATE MENU COMPONENTS (STATELESS) ---
+    // --- MENÚ PRIVADO ---
     @Composable
     private fun DrawerMenuContent() {
-        val isDarkMode by com.jastin.boveda.globalIsDarkMode.collectAsState()
-
-        Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(24.dp)
+        ) {
             Text(
-                "Jastin Abel",
+                "Alexander Sterling",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(top = 24.dp, bottom = 32.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
             )
 
             DrawerItem(icon = Icons.Default.Security, text = "Digital Token")
@@ -154,49 +166,16 @@ class MainScreen : Screen {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Dark/Light Mode Switch
-            Row(
+            // Developer Note (Glassmorphism sutil)
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
+                ),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (isDarkMode) Icons.Default.DarkMode else Icons.Default.LightMode,
-                        contentDescription = "Dark Mode",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = "Dark Mode",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                Switch(
-                    checked = isDarkMode,
-                    onCheckedChange = { isDark ->
-                        com.jastin.boveda.globalSettingsRepository.updateThemePreference(isDark)
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Emerald500,
-                        checkedTrackColor = MaterialTheme.colorScheme.background,
-                        uncheckedThumbColor = Slate400,
-                        uncheckedTrackColor = Slate100
-                    )
-                )
-            }
-
-            // Developer Note
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    .navigationBarsPadding()
+                    .padding(bottom = 24.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -236,9 +215,8 @@ class MainScreen : Screen {
         }
     }
 
-    // --- 5. PRIVATE BOTTOM NAV COMPONENTS (STATELESS) ---
     @Composable
-    private fun TabIconItem(tab: Tab, icon: ImageVector, label: String, isSelected: Boolean, onClick: () -> Unit) {
+    private fun TabIconItem(icon: ImageVector, label: String, isSelected: Boolean, onClick: () -> Unit) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() }) {
             Icon(imageVector = icon, contentDescription = label, tint = if (isSelected) Emerald500 else Slate400, modifier = Modifier.size(26.dp))
             Spacer(modifier = Modifier.height(4.dp))

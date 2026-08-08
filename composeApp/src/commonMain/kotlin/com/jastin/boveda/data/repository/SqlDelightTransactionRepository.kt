@@ -53,13 +53,14 @@ class SqlDelightTransactionRepository(
 
     // --- BALANCE CALCULATION ENGINE ---
     override val currentBalance: StateFlow<Double> = transactions.map { list ->
-        val initialBalance = 1500.00
+        // ¡CAPITAL CORPORATIVO INYECTADO AQUI!
+        val initialBalance = 35000.00
         val totalSpent = list.sumOf { it.amount }
         initialBalance + totalSpent
     }.stateIn(
         scope = scope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = 1500.00
+        initialValue = 35000.00
     )
 
     // --- WRITING (DOMAIN -> ENTITY) ---

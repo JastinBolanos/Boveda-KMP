@@ -1,9 +1,12 @@
 package com.jastin.boveda
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.navigator.Navigator
 import com.jastin.boveda.data.repository.SqlDelightSettingsRepository
 import com.jastin.boveda.database.BovedaDatabase
@@ -11,12 +14,15 @@ import com.jastin.boveda.database.DatabaseDriverFactory
 import com.jastin.boveda.data.repository.SqlDelightTransactionRepository
 import com.jastin.boveda.domain.repository.SettingsRepository
 import com.jastin.boveda.domain.repository.TransactionRepository
-import com.jastin.boveda.presentation.screens.main.MainScreen
+import com.jastin.boveda.presentation.screens.welcome.WelcomeScreen // ¡NUEVA IMPORTACIÓN!
 import com.jastin.boveda.presentation.theme.BovedaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.painterResource
+import boveda_kmp.composeapp.generated.resources.Res
+import boveda_kmp.composeapp.generated.resources.app_background_dark
 
 /* =========================================================================
  * COMPOSITION ROOT
@@ -24,10 +30,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * ========================================================================= */
 
 // --- 1. SERVICE LOCATOR ---
-// NOTE: `lateinit` is used as a temporary solution for manual dependency
-// injection. It must be initialized strictly before the application's
-// first render cycle.
-
 lateinit var globalTransactionRepository: TransactionRepository
 lateinit var globalSettingsRepository: SettingsRepository
 
@@ -37,13 +39,10 @@ val globalIsDarkMode = MutableStateFlow(false)
 fun App(driverFactory: DatabaseDriverFactory) {
 
     // --- 2. SECURED DATABASE BOOTSTRAP ---
-    // We use remember to ensure thread safety during UI recompositions.
     remember {
         if (!::globalTransactionRepository.isInitialized) {
             val driver = driverFactory.createDriver()
             val database = BovedaDatabase(driver)
-
-            // SupervisorJob ensures that a database failure does not permanently kill the scope.
             val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
             globalTransactionRepository = SqlDelightTransactionRepository(
@@ -57,10 +56,23 @@ fun App(driverFactory: DatabaseDriverFactory) {
         }
     }
 
-    val isDarkMode by globalIsDarkMode.collectAsState()
+    // --- 3. CONFIGURACIÓN VISUAL GLOBAL ---
+    BovedaTheme(isDarkTheme = true) {
 
-    BovedaTheme(isDarkTheme = isDarkMode) {
-        // --- 3. ROOT NAVIGATOR ---
-        Navigator(MainScreen())
+        // Caja principal que envuelve absolutamente todo
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            // LA IMAGEN MAESTRA (Se verá cuando pases al MainScreen)
+            Image(
+                painter = painterResource(Res.drawable.app_background_dark),
+                contentDescription = "Fondo Base de Bóveda",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            // --- 4. ROOT NAVIGATOR ---
+            // ¡EL CAMBIO MAESTRO! Ahora arranca en WelcomeScreen
+            Navigator(WelcomeScreen())
+        }
     }
 }
