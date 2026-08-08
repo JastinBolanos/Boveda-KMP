@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 data class TransferState(
     val amount: String = "",
     val recipient: String = "",
-    val balance: Double = 1500.00,
+    val balance: Double = 35000.00,
     val isLoading: Boolean = false,
     val successTransactionId: String? = null
 )
@@ -64,15 +64,13 @@ class TransferScreenModel : StateScreenModel<TransferState>(TransferState()) {
     // --- 3. TRANSACTION EXECUTION (FOREGROUND + FALLBACK) ---
     fun executeTransfer() {
         val amountNum = state.value.amount.toDoubleOrNull() ?: return
-        // Hard mathematical block: No negative amounts, no overdrafts, no more than $500.00
-        if (amountNum <= 0 || amountNum > state.value.balance || amountNum > 500.00) return
+
+        if (amountNum <= 0 || amountNum > state.value.balance || amountNum > 5000.00) return
 
         screenModelScope.launch {
             mutableState.update { it.copy(isLoading = true) }
             val safeId = "tx_${kotlin.random.Random.nextLong(100000, 999999)}"
 
-            // ARCHITECTURAL FIX: UI -> DOMAIN Mapping
-            // ScreenModel packages UI data into a pure Domain Entity to send to the Repository.
             val newTx = Transaction(
                 id = safeId,
                 amount = -amountNum,

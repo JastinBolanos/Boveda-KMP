@@ -1,5 +1,11 @@
 package com.jastin.boveda.presentation.screens.main
 
+import androidx.compose.animation.core.EaseInOutSine
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -226,15 +233,37 @@ class MainScreen : Screen {
 
     @Composable
     private fun FloatingTransferButton(onClick: () -> Unit) {
+        val infiniteTransition = rememberInfiniteTransition(label = "arrows_breathe")
+
+        val scaleXAnim by infiniteTransition.animateFloat(
+            initialValue = 0.9f,
+            targetValue = 1.2f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 1200, easing = EaseInOutSine),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "arrows_stretch"
+        )
+
         Box(
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.onSurface)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() },
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { onClick() },
             contentAlignment = Alignment.Center
         ) {
-            Icon(imageVector = Icons.Default.SwapHoriz, contentDescription = "Transfer", tint = Emerald500, modifier = Modifier.size(32.dp))
+            Icon(
+                imageVector = Icons.Default.SwapHoriz,
+                contentDescription = "Transfer",
+                tint = Emerald500,
+                modifier = Modifier
+                    .size(32.dp)
+                    .graphicsLayer { scaleX = scaleXAnim }
+            )
         }
     }
 }

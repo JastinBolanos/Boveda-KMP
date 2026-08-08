@@ -53,7 +53,7 @@ data class TransferScreen(val currentBalance: Double) : Screen {
         var transferMessage by remember { mutableStateOf("") }
         val amountNum = state.amount.toDoubleOrNull() ?: 0.0
         val isOverdraft = amountNum > currentBalance
-        val exceedsLimit = amountNum > 500.00
+        val exceedsLimit = amountNum > 5000.00
         val hasError = isOverdraft || exceedsLimit
         val hasTrailingDot = state.amount.endsWith(".")
 
@@ -145,21 +145,22 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                             BasicTextField(
                                 value = state.amount,
                                 onValueChange = { screenModel.onIntent(TransferIntent.UpdateAmount(it)) },
-                                // El texto tecleado por el usuario es blanco puro y sólido
+
                                 textStyle = TextStyle(
                                     fontSize = 56.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = if (hasError) errorColor else Color.White
                                 ),
+
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
                                 enabled = !state.isLoading,
                                 cursorBrush = SolidColor(Emerald500),
                                 modifier = Modifier.width(IntrinsicSize.Min),
+
                                 visualTransformation = VisualTransformation { text ->
                                     if (text.text.isEmpty()) {
                                         TransformedText(
-                                            // EL CERO FANTASMA AHORA ES BLANCO PURO (NO OPACO)
                                             text = AnnotatedString("0", spanStyle = SpanStyle(color = Color.White)),
                                             offsetMapping = object : OffsetMapping {
                                                 override fun originalToTransformed(offset: Int): Int = 1
@@ -180,21 +181,24 @@ data class TransferScreen(val currentBalance: Double) : Screen {
                         ) {
                             QuickAmountChip("+ $50") {
                                 val newTotal = amountNum + 50.0
-                                screenModel.onIntent(TransferIntent.UpdateAmount(newTotal.toString()))
+                                val cleanTotal = if (newTotal % 1.0 == 0.0) newTotal.toLong().toString() else newTotal.toString()
+                                screenModel.onIntent(TransferIntent.UpdateAmount(cleanTotal))
                             }
                             QuickAmountChip("+ $100") {
                                 val newTotal = amountNum + 100.0
-                                screenModel.onIntent(TransferIntent.UpdateAmount(newTotal.toString()))
+                                val cleanTotal = if (newTotal % 1.0 == 0.0) newTotal.toLong().toString() else newTotal.toString()
+                                screenModel.onIntent(TransferIntent.UpdateAmount(cleanTotal))
                             }
                             QuickAmountChip("MAX", isAccent = true) {
-                                screenModel.onIntent(TransferIntent.UpdateAmount(currentBalance.toString()))
+                                val cleanTotal = if (currentBalance % 1.0 == 0.0) currentBalance.toLong().toString() else currentBalance.toString()
+                                screenModel.onIntent(TransferIntent.UpdateAmount(cleanTotal))
                             }
                         }
 
                         if (isOverdraft) {
                             Text("Insufficient balance", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         } else if (exceedsLimit) {
-                            Text("The maximum transfer limit is $500.00", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text("The maximum transfer limit is $5000.00", color = Red500, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                         }
                     }
 

@@ -1,9 +1,6 @@
 package com.jastin.boveda.presentation.screens.welcome
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +23,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import boveda_kmp.composeapp.generated.resources.Res
+import boveda_kmp.composeapp.generated.resources.inria_serif_bold
 import boveda_kmp.composeapp.generated.resources.splash_background
 import boveda_kmp.composeapp.generated.resources.splash_card_bg
 import cafe.adriel.voyager.core.screen.Screen
@@ -43,12 +41,12 @@ class WelcomeScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val coroutineScope = rememberCoroutineScope()
 
-        // --- ESTADOS DE ANIMACIÓN ---
-        var isLoading by remember { mutableStateOf(false) }
+        // --- ESTADOS DE ANIMACIÓN INDEPENDIENTES ---
+        var loadingAction by remember { mutableStateOf("") }
+        val isAnyLoading = loadingAction.isNotEmpty()
 
         val buttonPurple = Color(0xFF6D28D9)
 
-        // --- DEGRADADO EXACTO PARA "VAULT" ---
         val vaultGradient = Brush.linearGradient(
             colorStops = arrayOf(
                 0.00f to Color(0xFF899CFF),
@@ -59,15 +57,13 @@ class WelcomeScreen : Screen {
         )
 
         // --- ACCIÓN DE ENTRADA A LA BÓVEDA ---
-        val onEnterVault = {
-            if (!isLoading) {
-                isLoading = true
+        val onEnterVault = { action: String ->
+            if (!isAnyLoading) {
+                loadingAction = action
                 coroutineScope.launch {
-                    // Mantenemos la animación veloz y el brillo por 1.2 segundos para que el usuario lo disfrute
                     delay(1200)
                     navigator.push(MainScreen())
-                    // Reseteamos el estado por si el usuario presiona el botón de "Atrás" después
-                    isLoading = false
+                    loadingAction = ""
                 }
             }
         }
@@ -87,8 +83,6 @@ class WelcomeScreen : Screen {
                     .fillMaxSize()
                     .padding(horizontal = 24.dp, vertical = 48.dp),
             ) {
-
-                // Espaciador superior
                 Spacer(modifier = Modifier.weight(0.6f))
 
                 // --- 2. SECCIÓN SUPERIOR (TEXTOS) ---
@@ -100,10 +94,13 @@ class WelcomeScreen : Screen {
                                 append("Vault")
                             }
                         },
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily(
+                            org.jetbrains.compose.resources.Font(Res.font.inria_serif_bold)
+                        ),
+                        fontSize = 38.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        lineHeight = 48.sp
+                        lineHeight = 44.sp
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -111,6 +108,7 @@ class WelcomeScreen : Screen {
                     Text(
                         text = "No borders, no downtime, no compromises.\nYour offline-first financial engine.",
                         fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraLight,
                         color = Color.White.copy(alpha = 0.9f),
                         lineHeight = 24.sp
                     )
@@ -130,58 +128,57 @@ class WelcomeScreen : Screen {
 
                 // --- 4. BOTONES DE ACCIÓN ---
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    // BOTÓN 1: CORPORATE ACCOUNT
                     Button(
-                        onClick = onEnterVault,
+                        onClick = { onEnterVault("CORPORATE") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = buttonPurple),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = buttonPurple,
+                            disabledContainerColor = buttonPurple,
+                            disabledContentColor = Color.White
+                        ),
                         shape = RoundedCornerShape(12.dp),
-                        enabled = !isLoading // Desactiva el clic múltiple
+                        enabled = !isAnyLoading
                     ) {
-                        if (isLoading) {
-                            // Animación de puntos veloces
+                        if (loadingAction == "CORPORATE") {
                             PremiumLoadingDots()
                         } else {
-                            Text("Open Corporate Account", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                text = "Open Corporate Account",
+                                color = if (loadingAction == "LOGIN") Color.White.copy(alpha = 0.5f) else Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Text(
-                        text = "Log in to your Vault",
-                        color = if (isLoading) Color.White.copy(alpha = 0.5f) else Color.White,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
+                    // BOTÓN 2: LOG IN TO YOUR VAULT
+                    Box(
                         modifier = Modifier
-                            .clickable(enabled = !isLoading) { onEnterVault() }
-                            .padding(vertical = 12.dp, horizontal = 24.dp)
-                    )
+                            .clip(CircleShape)
+                            .clickable(enabled = !isAnyLoading) { onEnterVault("LOGIN") }
+                            .padding(vertical = 12.dp, horizontal = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (loadingAction == "LOGIN") {
+                            PremiumLoadingDots()
+                        } else {
+                            Text(
+                                text = "Log in to your Vault",
+                                color = if (loadingAction == "CORPORATE") Color.White.copy(alpha = 0.5f) else Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-            }
-
-            // --- 5. LUZ QUE BRILLA (EFECTO BÓVEDA ABRIÉNDOSE) ---
-            AnimatedVisibility(
-                visible = isLoading,
-                enter = fadeIn(animationSpec = tween(600)),
-                exit = fadeOut(animationSpec = tween(400))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(
-                                    Color(0xFF8B5CF6).copy(alpha = 0.3f),
-                                    Color.Transparent
-                                ),
-                                radius = 1500f
-                            )
-                        )
-                )
             }
         }
     }
