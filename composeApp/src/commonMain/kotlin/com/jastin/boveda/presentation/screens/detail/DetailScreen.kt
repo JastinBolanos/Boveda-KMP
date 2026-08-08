@@ -84,7 +84,7 @@ data class DetailScreen(val transactionId: String) : Screen {
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { navigator.pop() }) {
+                    IconButton(onClick = { navigator.popUntilRoot() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                     Text("Operation Detail", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)

@@ -62,7 +62,7 @@ class WelcomeScreen : Screen {
                 loadingAction = action
                 coroutineScope.launch {
                     delay(1200)
-                    navigator.push(MainScreen())
+                    navigator.replaceAll(MainScreen())
                     loadingAction = ""
                 }
             }
