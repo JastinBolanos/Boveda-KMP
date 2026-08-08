@@ -56,8 +56,6 @@ kotlin {
             implementation("cafe.adriel.voyager:voyager-screenmodel:1.0.0")
             implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.0")
 
-            // --- TUS ARMAS NIVEL SENIOR (COMPARTIDAS PARA AMBAS PLATAFORMAS) ---
-
             // 1. Corrutinas y Tiempo
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
@@ -93,8 +91,8 @@ android {
         applicationId = "com.jastin.boveda"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
     }
     packaging {
         resources {

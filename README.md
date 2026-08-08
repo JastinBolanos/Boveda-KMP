@@ -4,7 +4,7 @@
 
 <h1 align="center"> Bóveda KMP | Enterprise-Grade Fintech Architecture</h1>
 
-> **High-Security, Cross-Platform Fintech Architecture with Offline Availability and Unidirectional Reactivity.**
+> **High-Security, Cross-Platform Fintech Architecture with Offline Availability, Unidirectional Reactivity, and Immersive UI/UX.**
 
 Bóveda KMP is more than just a banking interface. It is an enterprise-grade architectural demonstration (Android & iOS) built on rigorous engineering principles to ensure that **financial transactions remain immutable and funds are never duplicated**, even when operating with intermittent or no connectivity.
 
@@ -16,39 +16,55 @@ Bóveda KMP is more than just a banking interface. It is an enterprise-grade arc
 </p>
 
 <p align="center">
-  <a href="https://github.com/JastinBolanos/Boveda-KMP/releases/download/v1.0.0/BovedaKMP.apk">
+  <a href="https://github.com/JastinBolanos/Boveda-KMP/releases/download/v1.2.0/BovedaKMP.apk">
     <img src="https://img.shields.io/badge/Descargar-APK%20Android-green?style=for-the-badge&logo=android&logoColor=white" alt="Descargar APK">
   </a>
 </p>
 
-## User Experience (UI/UX)
-A design focused on transactional fluidity, integrating state-based micro-interactions, cross-platform components, and native support for Dark and Light modes.
+## User Experience (UI/UX) & Immersive Design
+A design focused on transactional fluidity, integrating state-based micro-interactions, cross-platform components, and native support for Dark and Light modes. The application features a fully immersive **Edge-to-Edge architecture** with transparent scaffolds and a persistent global background.
+
+### Premium Micro-Interactions:
+* ✨ **Breathing Golden Currency:** A subtle, luxurious pulsing animation on the Transfer Screen's `$` symbol to guide user input.
+* 🌊 **Luminous Shimmers & Light Waves:** Fluid light effects on transaction borders and balance indicators to create a "living" interface.
+* 🪟 **Glassmorphism & Edge-to-Edge:** Deep, immersive side menus (Drawer) with custom background layers and translucent overlays.
 
 ### <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHp0bDAxNXk1bG56OHp6MHU5NWp3aG95Zm9ndzNjNmh2amxpNTZmNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/F0VCptrJteVWDeLBHD/giphy.gif" width="70" align="absmiddle" /> Live Demo: Offline-First in Action
 > ** Notice the Status Bar:** Pay close attention to the Wi-Fi icon at the very top of the screen. This video demonstrates how the application gracefully handles connectivity drops by securely queuing the transaction locally (**Pending** state), and automatically synchronizing it (**Success** state) the exact second the network is restored.
 
-https://github.com/user-attachments/assets/9232db47-98f0-4ad2-9eed-55c904a09140
+https://github.com/user-attachments/assets/541a2072-546e-4481-b72a-10f4ee6e872e
 
 <br>
 
-<p align="center">
-  <img src="docs/assets/home_dark.png" width="250" alt="Pantalla de Inicio Oscura">
-  &nbsp;&nbsp;
-  <img src="docs/assets/transfer_dark.png" width="250" alt="Teclado de Transferencia">
-  &nbsp;&nbsp;
-  <img src="docs/assets/receipt_success.png" width="250" alt="Recibo Exitoso">
-</p>
+### Interface Showcase
+
+#### 1. Core Banking & Immersive Navigation
+> **Glassmorphism, translucent layers, and Edge-to-Edge design.** The user experience begins with a clean corporate interface, an intuitive dashboard with clear visual hierarchy, and a liquid-glass sidebar that maintains the application's context.
 
 <p align="center">
-  <img src="docs/assets/menu_dark.png" width="250" alt="Menú Lateral Oscuro">
+  <img src="docs/assets/splash_background.png" width="250" alt="Enterprise Welcome Screen">
   &nbsp;&nbsp;
-  <img src="docs/assets/activity_dark.png" width="250" alt="Historial de Actividad">
+  <img src="docs/assets/home_dark.png" width="250" alt="Corporate Balance Dashboard">
   &nbsp;&nbsp;
-  <img src="docs/assets/receipt_pending.png" width="250" alt="Recibo Pendiente Offline">
+  <img src="docs/assets/menu_dark.png" width="250" alt="Edge-to-Edge Glassmorphism Menu">
 </p>
 
+#### 2. Fluid Transactions & Activity Tracking
+> **Optimized flows and visual feedback.** Transfers feature interactive, illuminated input fields to guide user focus, while the activity history clearly classifies states (completed, pending) using intuitive corporate color codes.
+
 <p align="center">
-  <img src="docs/assets/home_light.png" width="250" alt="Pantalla de Inicio Clara">
+  <img src="docs/assets/transfer_dark.png" width="250" alt="Immersive Transfer UI">
+  &nbsp;&nbsp;
+  <img src="docs/assets/activity_dark.png" width="250" alt="Activity History List">
+</p>
+
+#### 3. Offline-First Synchronization States
+> **Total connectivity transparency.** When the network drops, the transaction is safely queued (Pending) with an amber indicator. Upon regaining signal, the system processes it and immediately displays the successful receipt (Success) in green, guaranteeing trust with zero data loss.
+
+<p align="center">
+  <img src="docs/assets/receipt_pending.png" width="250" alt="Offline Pending Receipt">
+  &nbsp;&nbsp;
+  <img src="docs/assets/receipt_success.png" width="250" alt="Synchronized Success Receipt">
 </p>
 
 ---
@@ -59,6 +75,7 @@ https://github.com/user-attachments/assets/9232db47-98f0-4ad2-9eed-55c904a09140
 * 🔹 **Unidirectional State** — The UI reacts only to changes in the local database.
 * 🔹 **True Cross-Platform** — Single codebase; native Android and iOS apps.
 * 🔹 **Immutable History** — Records are never deleted; they only change state.
+* 🔹 **Enterprise Base Capital** — Default corporate environment configured with $35,000.00 base balance for realistic enterprise demonstrations.
 
 ---
 
