@@ -25,7 +25,7 @@ Cualquier acción fuera de los permisos concedidos anteriormente constituye una 
 
 * **Reutilización:** Extraer, copiar o implementar el logotipo, identidad visual o cualquier fracción de los activos en otras aplicaciones, sitios web, productos, o entornos de producción.
 * **Uso Comercial:** Cualquier tipo de explotación comercial, publicitaria, lucrativa o de monetización que involucre estos gráficos.
-* **Modificación (Obras derivadas):** Alterar colores, recortar, rediseñar, animar o crear trabajos basados en el logotipo y diseño original.
+* **Modificación (Obras derivadas):** Alterar colores, recortar, rediseñar, animar o crear trabajos basados en el logotipo y diseño original de la identidad corporativa.
 * **Apropiación de Marca:** Registrar, intentar registrar, o utilizar la denominación "Bóveda KMP" como marca comercial propia o asociarla a productos de terceros.
 * **Evasión Legal:** Eliminar, ofuscar o modificar los avisos de derechos de autor presentes en los archivos o en esta licencia.
 
@@ -35,5 +35,11 @@ Para respaldar legalmente estas restricciones, los activos operan bajo un esquem
 * **Recursos Artísticos y Gráficos:** Protegidos bajo la licencia internacional Creative Commons Atribución-NoComercial-SinDerivadas 4.0 Internacional (CC BY-NC-ND 4.0).
 * **Marca Comercial e Identidad Corporativa:** Protegidos bajo Derechos de Autor (Copyright © 2026 Jastin Bolaños) - Todos los derechos reservados. No se transfiere, cede ni otorga implícitamente ninguna licencia sobre la propiedad intelectual de la marca.
 
+## 5. Atribución de Recursos de Terceros y Propiedad de la Composición
+Para garantizar la total transparencia y el cumplimiento de las normativas de propiedad intelectual, se declara formalmente la procedencia y los derechos sobre la composición gráfica:
+
+* **Descargo de Titularidad Base:** Ciertos elementos gráficos crudos, de manera específica los **fondos de pantalla base (backgrounds)** y los **recursos visuales de las tarjetas de la pantalla de bienvenida (Welcome Cards)**, fueron obtenidos a través de recursos compartidos en la Comunidad de Figma y adaptados profesionalmente para este proyecto. El autor (Jastin Bolaños) no reclama la autoría original ni la propiedad exclusiva sobre dichos recursos crudos, los cuales operan bajo los lineamientos permisivos de la Comunidad de Figma.
+* **Propiedad Absoluta del Diseño Final (Composición):** No obstante lo anterior, se declara categóricamente que la composición visual final, la arquitectura de diseño de la interfaz (UI), la experiencia de usuario (UX), las micro-interacciones, la estilización, la paleta cromática unificada y la estética integral con la que concluye la aplicación **Bóveda KMP**, constituyen una obra derivada, única y original. Toda esta ejecución final, en conjunto con su identidad de marca, son **100% propiedad exclusiva de Jastin Bolaños**, manteniéndose estrictamente protegidas bajo los términos expuestos en los incisos anteriores de este documento.
+
 ---
-*Este repositorio es una demostración técnica. El diseño es propiedad exclusiva de su autor y está aquí únicamente para que la aplicación compile y se visualice correctamente en su entorno de origen.*
+*Este repositorio es una demostración técnica. La composición de diseño final es propiedad exclusiva de su autor y está aquí únicamente para que la aplicación compile y se visualice correctamente en su entorno de origen.*
