@@ -6,7 +6,7 @@
 
 > **High-Security, Cross-Platform Fintech Architecture with Offline Availability, Unidirectional Reactivity, and Immersive UI/UX.**
 
-Bóveda KMP is more than just a banking interface. It is an enterprise-grade architectural demonstration (Android & iOS) built on rigorous engineering principles to ensure that **financial transactions remain immutable and funds are never duplicated**, even when operating with intermittent or no connectivity.
+Bóveda KMP is more than just a banking interface. It is an enterprise-grade architectural demonstration (Native Android UI + Multiplatform Core) built on rigorous engineering principles to ensure that financial transactions remain immutable and funds are never duplicated, even when operating with intermittent or no connectivity.
 
 <p align="center">
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.x-blue.svg?style=for-the-badge&logo=kotlin" alt="Kotlin"></a>
@@ -73,7 +73,7 @@ https://github.com/user-attachments/assets/541a2072-546e-4481-b72a-10f4ee6e872e
 * 🔹 **100% Offline-First** — Works without an internet connection; synchronizes automatically when the signal returns.
 * 🔹 **Guaranteed Idempotency** — Designed to make duplicate transactions IMPOSSIBLE.
 * 🔹 **Unidirectional State** — The UI reacts only to changes in the local database.
-* 🔹 **True Cross-Platform** — Single codebase; native Android and iOS apps.
+* 🔹 **Future-Proof Architecture** — Single shared codebase driving a fluid native Android UI today, structurally prepared to scale to iOS tomorrow without rewriting business logic.
 * 🔹 **Immutable History** — Records are never deleted; they only change state.
 * 🔹 **Enterprise Base Capital** — Default corporate environment configured with $35,000.00 base balance for realistic enterprise demonstrations.
 
