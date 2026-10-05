@@ -1,14 +1,13 @@
-================================================================================
-SOFTWARE LICENSE - BOVEDA KMP
-Copyright (c) 2026 Jastin Bolanos / Boveda KMP - All rights reserved
-================================================================================
+MIT License
 
-PART 1: BASE MIT LICENSE
+Copyright (c) 2026 Jastin Bolanos
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software, including the rights to use, copy, modify and merge copies
-of the Software, subject to the following conditions:
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
@@ -20,56 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
--------------------------------------------------------------------------------
-PART 2: ADDITIONAL CONDITIONS AND STRICT USE RESTRICTIONS
-(Based on the Commons Clause v1.0 model and Anti-Plagiarism Protection)
--------------------------------------------------------------------------------
-
-Without limiting other conditions of this License, you are NOT AUTHORIZED,
-UNDER ANY CIRCUMSTANCES, TO:
-
-1. PRODUCTION USE: Use this software in production environments, with real
-   data, real financial transactions, or in the operational environments of
-   companies or individuals.
-2. COMMERCIAL USE: Make any commercial, profitable, monetized use, or use
-   that generates direct or indirect income. Sell, rent, or license the
-   Software as a product or service.
-3. PLAGIARISM AND TRIVIAL MODIFICATIONS: Publish, distribute, clone, or
-   upload this repository making only superficial modifications in order to
-   claim, present, or simulate that it is your work or property. Any
-   alteration representing a minimal modification (e.g., from 1% to 29%)
-   such as changing variable names, altering colors, or adding comments,
-   shall be considered a copy and a violation of this license.
-4. CIRCUMVENTION: Remove, hide, or modify this legal notice or the copyright
-   notices present in the base code.
-
-EDUCATIONAL PERMISSIONS AND DERIVATIVE WORKS:
-This project is EXCLUSIVELY intended for educational and learning purposes.
-You are free to clone the repository, analyze the architecture, and extract
-snippets or components for your study.
-
-If you decide to make structural or functional modifications to create a
-derivative work for learning purposes or a personal portfolio, you are
-STRICTLY OBLIGATED to comply with the following conditions before publishing it:
-
-a) THE 30% RULE (SIGNIFICANT MODIFICATION): The derivative work must contain a
-   MINIMUM OF 30% of real and verifiable modifications in the logic,
-   architecture, or functionalities of the code. The publication of nearly
-   identical clones will not be tolerated.
-b) MANDATORY CREDIT: Give explicit credit to the original architecture and
-   code of Boveda KMP.
-c) IDENTITY REMOVAL: Remove and replace all logos, icons, screenshots, and
-   references to the name "Boveda KMP". You may not use the visual identity
-   of this project in your own repositories.
-
-This Condition is a separate and additional agreement to the MIT License. By
-using the Software, you agree to comply with it. If you do not agree, DO NOT
-USE, MODIFY, OR DOWNLOAD THIS SOFTWARE.
-
-================================================================================
-IMPORTANT NOTICE REGARDING TRADEMARKS AND GRAPHIC RESOURCES
-THIS LICENSE APPLIES ONLY TO THE SOURCE CODE.
-LOGOS, IMAGES, DESIGNS, VISUAL IDENTITY, AND THE "BOVEDA KMP" TRADEMARK
-ARE NOT INCLUDED IN THIS LICENSE. SEE THE ASSETS_LICENSE.md FILE.
-================================================================================
