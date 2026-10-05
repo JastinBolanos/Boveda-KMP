@@ -1,18 +1,19 @@
-# Security Policy & Vulnerability Disclosure
+# Security Policy
 
 ## Supported Versions
 
-We currently provide security updates and maintenance for the latest version of the Bóveda KMP architecture showcase.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | SI                 |
-| < 1.0   | NO                 |
+| Version | Supported |
+| ------- | --------- |
+| >= 1.0.x| ✅ Yes     |
+| < 1.0   | ❌ No      |
 
 ## Reporting a Vulnerability
 
-**Note:** Bóveda KMP is a technical demonstration project designed exclusively for educational purposes and architectural analysis. It does **not** handle real money, sensitive user data, or operate in production environments.
+Bóveda KMP is an open-source proof-of-concept synchronization engine. It does not handle real money or sensitive user data.
 
-However, demonstrating enterprise-grade engineering standards is a core pillar of this showcase. If you discover a structural vulnerability, an exploit in the transaction idempotency logic, or a flaw in the offline SQLite synchronization mechanism, please **DO NOT** open a public issue.
+However, code quality and architectural integrity are core to this project. If you discover a vulnerability—such as a flaw in the transaction idempotency logic or the offline sync mechanism—we highly encourage you to report it. You can:
 
-Instead, please report it privately by sending an email to the Official Contact listed in the `LICENSE` file. All architectural security reports will be reviewed and addressed promptly to maintain the technical excellence of this portfolio.
+1. Use GitHub's **Private Vulnerability Reporting** feature in this repository.
+2. Open a standard [Issue](https://github.com/JastinBolanos/Boveda-KMP/issues) if it's a general architectural flaw.
+
+Pull Requests with security and stability enhancements are always welcome and appreciated!
